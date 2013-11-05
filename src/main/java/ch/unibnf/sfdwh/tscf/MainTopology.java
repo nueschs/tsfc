@@ -46,30 +46,33 @@ private static String track = "obama,federer,nsa,nfl";
         FuzzyBolt fuzzyBolt = new FuzzyBolt();
         fuzzyBolt.setFuzzyModelName("SentiWordNet");
         
-        builder.setBolt("printerBolt", new PrinterBolt(),1).
+        builder.setBolt("fuzzyBolt", fuzzyBolt).
         	shuffleGrouping("twitterStream");
+        
+        builder.setBolt("printerBolt", new PrinterBolt(),1).
+        	shuffleGrouping("fuzzyBolt");
         
         
 		/*------ SETUP CONFIG --------*/
-//		Config conf = new Config();
-//		conf.setNumWorkers(numWorkers);
-//		conf.setMaxSpoutPending(maxSpoutPending);
-//		conf.setNumAckers(numAckers);
-//		conf.setMessageTimeoutSecs(messageTimeout);
-//		/*---------------------------*/
-//		
-//		if(localCluster){
-//		/*----- LOCAL CLUSTER -------*/
-//		cluster = new LocalCluster();
-//		conf.setDebug(false);
-//		cluster.submitTopology("TwitterStorm", conf, builder.createTopology());
-//		/*---------------------------*/
-//		}
-//		else {
-//		/*----- CLUSTER -------*/
-//		StormSubmitter.submitTopology("TwitterStorm", conf, builder.createTopology());
-//		/*---------------------*/
-//		}
+		Config conf = new Config();
+		conf.setNumWorkers(numWorkers);
+		conf.setMaxSpoutPending(maxSpoutPending);
+		conf.setNumAckers(numAckers);
+		conf.setMessageTimeoutSecs(messageTimeout);
+		/*---------------------------*/
+		
+		if(localCluster){
+		/*----- LOCAL CLUSTER -------*/
+		cluster = new LocalCluster();
+		conf.setDebug(false);
+		cluster.submitTopology("TwitterStorm", conf, builder.createTopology());
+		/*---------------------------*/
+		}
+		else {
+		/*----- CLUSTER -------*/
+		StormSubmitter.submitTopology("TwitterStorm", conf, builder.createTopology());
+		/*---------------------*/
+		}
     }
 
 }

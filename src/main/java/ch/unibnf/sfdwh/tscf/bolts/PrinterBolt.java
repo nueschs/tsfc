@@ -22,7 +22,9 @@ public class PrinterBolt extends BaseBasicBolt {
 
 	@Override
 	public void execute(Tuple input, BasicOutputCollector collector) {
-		System.out.println(input.getValue(0));	
+		for(int i=0; i<input.size(); i++){
+			System.out.println(input.getValue(i));	
+		}
 	}
 
 	@Override
