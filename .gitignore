@@ -1,2 +1,13 @@
+#################
+## Eclipse
+#################
+
+.classpath
+.settings/
+
+# Temporary files
+*.*~
+
+
 target/
 .settings/
