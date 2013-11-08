@@ -28,13 +28,31 @@ public class SentiWordFuzzyModel extends FuzzyModel implements Serializable {
 		if(!this.hasDict()){
 			this.createDict();
 		}
-
+		Vector<String> words = this.doPreprocessing(text);
 		
+		float[] values = {0.0f, 0.0f, 0.0f};
+		int cnt = 0;
+		for(String w:words){
+			if(_dict.containsKey(w))
+			{
+				Vector<Double> v = _dict.get(w);
+				values[0] += v.get(0);
+				values[1] += v.get(1);
+				values[2] += v.get(2);
+				cnt++;
+			}
+		}
+		
+		if(cnt != 0){
+			values[0] /= cnt;
+			values[1] /= cnt;
+			values[2] /= cnt;
+		}
 		
 		List<Float> list = new ArrayList();
-		list.add(1.0f);
-		list.add(2.0f);
-		list.add(3.0f);
+		list.add(values[0]);
+		list.add(values[1]);
+		list.add(values[2]);
 		return list;
 	}
 
@@ -44,10 +62,10 @@ public class SentiWordFuzzyModel extends FuzzyModel implements Serializable {
 		list.add("tweet");
 		list.add("positive");
 		list.add("positive_value");
-		list.add("neutral");
-		list.add("neutral_value");
 		list.add("negative");
 		list.add("negative_value");
+		list.add("neutral");
+		list.add("neutral_value");
 		return list;
 	}
 
@@ -55,8 +73,8 @@ public class SentiWordFuzzyModel extends FuzzyModel implements Serializable {
 	public List<String> getLinguisticNames() {
 		List<String> list = new ArrayList();
 		list.add("positive");
-		list.add("neutral");
 		list.add("negative");
+		list.add("neutral");
 		return list;
 	}
 	
@@ -112,5 +130,14 @@ public class SentiWordFuzzyModel extends FuzzyModel implements Serializable {
 			return true;
 		else
 			return false;
+	}
+	
+	private Vector<String> doPreprocessing(String text){
+		String[] words = text.split(" ");
+		Vector<String> onlyWords = new Vector<String>();
+		for(String w:words){
+			onlyWords.add(w.replaceAll("[^a-zA-Z0-9]+", ""));
+		}
+		return onlyWords;
 	}
 }
