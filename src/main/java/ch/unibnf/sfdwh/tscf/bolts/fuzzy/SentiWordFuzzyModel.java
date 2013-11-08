@@ -18,16 +18,16 @@ import backtype.storm.tuple.Tuple;
 
 public class SentiWordFuzzyModel extends FuzzyModel implements Serializable {
 	
-	private String pathToSWN = "SentiWordNet_3.0.0_20130122.txt";
+	private String pathToSWN = "src/main/java/ch/unibnf/sfdwh/tscf/bolts/fuzzy/SentiWordNet_3.0.0_20130122.txt";
 	private HashMap<String, Vector<Double>> _dict = null;
 
 	@Override
 	public List<Float> getFuzzyValues(Tuple input) {
 		
-//		String text = this.getText(input);
-//		if(!this.hasDict()){
-//			this.createDict();
-//		}
+		String text = this.getText(input);
+		if(!this.hasDict()){
+			this.createDict();
+		}
 
 		
 		
