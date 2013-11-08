@@ -1,6 +1,8 @@
 package ch.unibnf.sfdwh.tscf;
 
+import ch.unibnf.sfdwh.tscf.bolts.FuzzyBolt;
 import ch.unibnf.sfdwh.tscf.bolts.PrinterBolt;
+import ch.unibnf.sfdwh.tscf.bolts.fuzzy.FuzzyModel;
 import ch.unibnf.sfdwh.tscf.spouts.TwitterSpout;
 
 import backtype.storm.Config;
@@ -41,8 +43,14 @@ private static String track = "obama,federer,nsa,nfl";
         
         builder.setSpout("twitterStream", new TwitterSpout(oauth_consumer_key, oauth_token, oauth_consumer_secret, oauth_access_token_secret, track));
         
-        builder.setBolt("printerBolt", new PrinterBolt(),1).
+        FuzzyBolt fuzzyBolt = new FuzzyBolt();
+        fuzzyBolt.setFuzzyModelName("SentiWordNet");
+        
+        builder.setBolt("fuzzyBolt", fuzzyBolt).
         	shuffleGrouping("twitterStream");
+        
+        builder.setBolt("printerBolt", new PrinterBolt(),1).
+        	shuffleGrouping("fuzzyBolt");
         
         
 		/*------ SETUP CONFIG --------*/
