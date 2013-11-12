@@ -195,7 +195,7 @@ public class SentiWordFuzzyModel extends FuzzyModel implements Serializable {
 		String[] words = text.split(" ");
 		Vector<String> onlyWords = new Vector<String>();
 		for(String w:words){
-			onlyWords.add(w.replaceAll("[^a-zA-Z0-9]+", ""));
+			onlyWords.add(w.replaceAll("[^a-zA-Z0-9]+", "").toLowerCase());
 		}
 		return onlyWords;
 	}
