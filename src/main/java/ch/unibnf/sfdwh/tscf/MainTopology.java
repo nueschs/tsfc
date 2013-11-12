@@ -43,7 +43,9 @@ private static String track = "obama,federer,nsa,nfl";
         
         builder.setSpout("twitterStream", new TwitterSpout(oauth_consumer_key, oauth_token, oauth_consumer_secret, oauth_access_token_secret, track));
         
+        // create a new bolt for fuzzy classification
         FuzzyBolt fuzzyBolt = new FuzzyBolt();
+        // define which fuzzy model approach should be used by the bolt 
         fuzzyBolt.setFuzzyModelName("SentiWordNet");
         
         builder.setBolt("fuzzyBolt", fuzzyBolt).
