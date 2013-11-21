@@ -11,3 +11,18 @@
 
 target/
 .settings/
+
+
+#############
+## Latex
+#############
+
+*.log
+*.aux
+*.out
+*~
+*synctex.gz
+*.bbl
+*.blg
+*.lts
+*.toc
