@@ -1,9 +1,18 @@
 package ch.unibnf.sfdwh.tscf.fuzzy;
 
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.google.common.base.Preconditions;
 
-public class TrapezoidClassification<T extends Number> implements FuzzyClassification<T> {
+public class TrapezoidClassification<T extends Number> implements FuzzyClassification<T>, Serializable {
 
+	private static final long serialVersionUID = -6043493029673268349L;
 	private static final String CLOSED_FUNCTION_MESSAGE = "null support values only allowed for functions open on the corresponding side";
 	private static final String BONDARY_MESSAGE = "The function needs to have a boundary on at least one side";
 	private final String literal;
@@ -11,6 +20,9 @@ public class TrapezoidClassification<T extends Number> implements FuzzyClassific
 	private final boolean leftOpen;
 	private final boolean rightOpen;
 	private final boolean isClosed;
+	private Map<String, T> fields;
+	private static final String[] FIELDS = { "lowerLimit", "lowerSupportLimit", "upperSupportLimit", "upperLimit" };
+	private static final String FIELD_ERROR = "No field exists with name = ";
 
 	public TrapezoidClassification(String literal, T lowerLimit, T lowerSupportLimit, T upperSupportLimit, T upperLimit) {
 
@@ -24,6 +36,8 @@ public class TrapezoidClassification<T extends Number> implements FuzzyClassific
 		this.lowerSupportLimit = lowerSupportLimit;
 		this.upperSupportLimit = upperSupportLimit;
 		this.upperLimit = upperLimit;
+		this.createFieldMap();
+
 		this.literal = literal;
 
 		this.leftOpen = this.lowerLimit == null;
@@ -35,6 +49,15 @@ public class TrapezoidClassification<T extends Number> implements FuzzyClassific
 		Preconditions.checkArgument(!(this.leftOpen && this.rightOpen), BONDARY_MESSAGE);
 
 		this.isClosed = !this.rightOpen && !this.leftOpen;
+	}
+
+	@Override
+	public Double getAverage(Collection<Double> values) {
+		Double d = 0.0;
+		for (Double t : values) {
+			d += t;
+		}
+		return d / values.size();
 	}
 
 	@Override
@@ -52,8 +75,43 @@ public class TrapezoidClassification<T extends Number> implements FuzzyClassific
 	}
 
 	@Override
-	public String getLiteral() {
+	public Map<String, Double> getClassifications(Map<String, T> discreteValues) {
+		Map<String, Double> result = new HashMap<>();
+		for (Entry<String, T> entry : discreteValues.entrySet()) {
+			result.put(entry.getKey(), this.getClassification(entry.getValue()));
+		}
+		return result;
+	}
+
+	@Override
+	public List<String> getFields() {
+		return Arrays.asList(FIELDS);
+	}
+
+	@Override
+	public T getFieldValue(String fieldName) throws IllegalArgumentException {
+		if (!this.fields.containsKey(fieldName)){
+			throw new IllegalArgumentException(FIELD_ERROR+fieldName);
+		}
+		return this.fields.get(fieldName);
+	}
+
+	@Override
+	public String getLinguisticTerm() {
 		return this.literal;
+	}
+
+	@Override
+	public FuzzyClassificationType getType() {
+		return FuzzyClassificationType.TRAPEZOID;
+	}
+
+	private void createFieldMap() {
+		this.fields = new HashMap<>();
+		this.fields.put(FIELDS[0], this.lowerLimit);
+		this.fields.put(FIELDS[1], this.lowerSupportLimit);
+		this.fields.put(FIELDS[2], this.upperSupportLimit);
+		this.fields.put(FIELDS[3], this.upperLimit);
 	}
 
 	private double getDifference(T lowValue, T highValue, T value, boolean isFalling) {

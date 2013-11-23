@@ -1,0 +1,14 @@
+CREATE KEYSPACE tsfc 
+	WITH strategy_class = 'SimpleStrategy'
+ 	AND strategy_options:replication_factor = 1;
+
+CREATE TABLE IF NOT EXISTS trapezoidTable (
+	id text PRIMARY KEY, 
+	lowerLimit double, 
+	lowerSupportLimit double, 
+	upperSupportLimit double, 
+	upperLimit double, 
+	literal text, 
+	overall double, 
+	singleValues map<text, double>
+);

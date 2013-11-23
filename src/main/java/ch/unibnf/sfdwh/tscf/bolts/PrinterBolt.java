@@ -9,27 +9,27 @@ import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Tuple;
 
 public class PrinterBolt extends BaseBasicBolt {
-	
+
 	@Override
 	public void cleanup() {
-		
+
 	}
-	
+
 	@Override
-	public void prepare(Map stormConf, TopologyContext context){
-		
+	public void declareOutputFields(OutputFieldsDeclarer declarer) {
+
 	}
 
 	@Override
 	public void execute(Tuple input, BasicOutputCollector collector) {
 		for(int i=0; i<input.size(); i++){
-			System.out.println(input.getValue(i));	
+			System.out.println(input.getValue(i));
 		}
 	}
 
 	@Override
-	public void declareOutputFields(OutputFieldsDeclarer declarer) {
-		
+	public void prepare(Map stormConf, TopologyContext context){
+
 	}
 
 }

@@ -7,12 +7,20 @@
 
 	<repositories>
 		<repository>
-			<id>clojars.org</id>
-			<url>http://clojars.org/repo</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<id>central</id>
+			<name>Maven Repository Switchboard</name>
+			<url>http://repo1.maven.org/maven2</url>
 		</repository>
 		<repository>
 			<id>mvn-repo</id>
 			<url>http://mvnrepository.com/repo</url>
+		</repository>
+		<repository>
+			<id>clojars.org</id>
+			<url>http://clojars.org/repo</url>
 		</repository>
 	</repositories>
 
@@ -42,7 +50,6 @@
 			<artifactId>guava</artifactId>
 			<version>15.0</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>
