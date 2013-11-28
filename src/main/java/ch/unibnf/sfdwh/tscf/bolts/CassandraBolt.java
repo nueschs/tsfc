@@ -23,9 +23,10 @@ public class CassandraBolt extends BaseRichBolt {
 
 	@Override
 	public void execute(Tuple input) {
-		this.collector.ack(input);
 		FuzzyClassificationType type = (FuzzyClassificationType) this.getField(1, input);
 		this.storeTuple(type, input);
+		System.out.println(">>> Stored tweet: "+this.getField(0, input));
+		this.collector.ack(input);
 
 	}
 

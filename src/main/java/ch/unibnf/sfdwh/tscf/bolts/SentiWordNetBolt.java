@@ -42,7 +42,6 @@ public class SentiWordNetBolt<T extends Number> extends BaseRichBolt {
 
 	@Override
 	public void execute(Tuple input) {
-		this.collector.ack(input);
 		Map<String, T> discreteValues = this.discreteClassification.getClassifications(input);
 		Map<String, Double> fuzzyValues = this.fuzzyClassification.getClassifications(discreteValues);
 		List<Object> output = new ArrayList<>();
@@ -55,6 +54,7 @@ public class SentiWordNetBolt<T extends Number> extends BaseRichBolt {
 		}
 		output.add(fuzzyValues);
 		this.collector.emit(input, output);
+		this.collector.ack(input);
 	}
 
 	@Override

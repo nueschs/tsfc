@@ -1,8 +1,9 @@
 package ch.unibnf.sfdwh.tscf.discrete;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +16,7 @@ public class SentiWordNetClassification implements DiscreteClassification<Double
 
 	private static final long serialVersionUID = -6638321476022107160L;
 
-	private static final String SWN_PATH ="src/main/resources/SentiWordNet_3.0.0_20130122.txt";
+	private static final String SWN_PATH ="SentiWordNet_3.0.0_20130122.txt";
 
 	private static final int WORD_POSITION = 4;
 
@@ -55,7 +56,8 @@ public class SentiWordNetClassification implements DiscreteClassification<Double
 
 	private Map<String, Double> createDict(int position) throws IOException {
 		Map<String, Double> dict = new HashMap<>();
-		BufferedReader csv =  new BufferedReader(new FileReader(SWN_PATH));
+		InputStream is = this.getClass().getClassLoader().getResourceAsStream(SWN_PATH);
+		BufferedReader csv =  new BufferedReader(new InputStreamReader(is));
 		String line = "";
 		while((line = csv.readLine()) != null){
 			// The file is tab separated

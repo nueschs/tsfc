@@ -7,7 +7,6 @@ import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.TopologyBuilder;
 import ch.unibnf.sfdwh.tscf.bolts.CassandraBolt;
-import ch.unibnf.sfdwh.tscf.bolts.FuzzyBolt;
 import ch.unibnf.sfdwh.tscf.bolts.SentiWordNetBolt;
 import ch.unibnf.sfdwh.tscf.bolts.SentiWordNetFactory;
 import ch.unibnf.sfdwh.tscf.spouts.TwitterSpout;
@@ -33,32 +32,27 @@ public class MainTopology {
 	/* ----------------------------- */
 
 	/*------ TWITTER TRACK ------*/
-	private static String track = "obama,federer,nsa,nfl";
+	private static String track;
 	/* ----------------------------- */
 
 
 	public static void main( String[] args ) throws InterruptedException, AlreadyAliveException, InvalidTopologyException
 	{
+		if (args.length == 0){
+			System.err.println("Must supply tweet topics to follow (comma separated, without spaces)");
+			return;
+		}
+
+		track = args[0];
+
 		TopologyBuilder builder = new TopologyBuilder();
 
 		builder.setSpout("twitterStream", new TwitterSpout(oauth_consumer_key, oauth_token, oauth_consumer_secret, oauth_access_token_secret, track));
-
-		// create a new bolt for fuzzy classification
-		FuzzyBolt fuzzyBolt = new FuzzyBolt();
-		// define which fuzzy model approach should be used by the bolt
-		fuzzyBolt.setFuzzyModelName("SentiWordNet");
-
-		//		builder.setBolt("fuzzyBolt", fuzzyBolt).
-		//		shuffleGrouping("twitterStream");
 
 		SentiWordNetBolt<Double> bolt = SentiWordNetFactory.createPositiveSentiWordNetBolt();
 		builder.setBolt("swnPositiveBolt", bolt).shuffleGrouping("twitterStream");
 		builder.setBolt("cassandraBolt", new CassandraBolt(),1).
 		shuffleGrouping("swnPositiveBolt");
-
-		//		builder.setBolt("printerBolt", new PrinterBolt(),1).
-		//		shuffleGrouping("fuzzyBolt");
-
 
 		/*------ SETUP CONFIG --------*/
 		Config conf = new Config();
