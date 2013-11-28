@@ -59,9 +59,14 @@ Storm is an open source distributed real-time computation system and programming
 	\item Spouts are responsible to fetch the data from a source (e.g. text file, twitter streaming API)
 	\item Bolts are responsible for the transformations of the fetched data
 \end{itemize}
-The spout acts as the source of the data flow and the last bolt is the sink which store the output to a database. The output of one component goes always to the input of the next, therefore no data will flow through an already visited node. To illustrate the components of the storm architecture we will take a look at the following example:\\\\
+The spout acts as the source of the data flow and the last bolt is the sink which store the output to a database. The output of one component goes always to the input of the next, therefore no data will flow through an already visited node. A simple example should help to illustrate the components of the storm architecture (Figure \ref{storm_example}):\\
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5]{images/storm_example.png}
+	\caption{Storm example}
+	\label{storm_example}
+\end{figure}
 All the spoken words during the TV news show will be stored in a text file. If a new sentence was written into the file the spout hands them to the responsible bolt which separate the sentence into words. This stream of words is passed to another bolt that compares each word to a list of politician's names. If there is a match, the second bolt increases the counter for that name in a storage. To check the number of occurrence, query the database which is updated in real-time.\\
-Figure 1.1 Storm book\\
 In a storm cluster there are 2 node types, a master node and worker nodes. On the master node runs a daemon called 'Nimbus', which is responsible for code distribution, assigning tasks to the worker nodes and failure monitoring. A portion of the topology is running on the worker nodes (responsible daemon is called 'Supervisor'). A topology runs across multiple worker nodes on different machines. All the daemons are stateless and can fail or restart without disturbing the system.\\
 Storm topologies can run in two different modes. The local mode is a single Java Virtual Machine on a local machine. This mode is used for developing, testing and debugging. The other possibility is to run the software on different remote machines. But there are no debugging information in the production mode.\\
 The difference between a traditional BigData approach like Hadoop and storm is the paradigm that it addresses. Hadoop fundamentally a batch processing system. The results are available after the whole data was distributed over the whole system. The construction of topologies that transform unterminated streams of data is supported by storm. A storm topology will never stop running (until termination by user), Hadoop jobs will stop after all available data (at starting time) proceeded by the system.
@@ -133,6 +138,16 @@ The \textit{FuzzyBolt} class is the first bolt in the whole Storm process and re
 	Shalom N. 
 	\newblock{\em Nati Shalom's Blog: Real-Time Big Data with Storm, Cassandra, and XAP; April 4th, 2013}
 	\newblock available: \url{http://natishalom.typepad.com/nati_shaloms_blog/2013/04/real-time-big-data-with-storm-cassandra-and-xap-1.html}, accessed 18th November 2013.
+
+	\bibitem{stormBook}
+	Jonathan Leibiusky, Gabriel Eisbruch and Dario Simonassi 
+	\newblock{\em Getting Started with Storm;}
+	\newblock 30th August 2012; O'Reilly, 978-1-449-32401-8
+
+	\bibitem{cassandraBook}
+	Eben Hewitt 
+	\newblock{\em Cassandra - The Definitive Guide;}
+	\newblock November 2010; O'Reilly, 978-1-449-39041-9
 	
 	\newblock{}
 	\newblock{}
