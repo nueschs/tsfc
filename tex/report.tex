@@ -26,6 +26,9 @@
 \pagestyle{plain}
 \newpage
 
+\tableofcontents
+\newpage
+
 \section{Introduction}
 
 The number of new tweets per second on the social media platform Twitter\footnote{https://www.twitter.com} is huge (over hundred thousand per second). To handle such a big amount of data, a scalable, fault-tolerant real-time framework has to be used. Storm was benchmarked at processing one million 100 byte messages per second per node\footnote{http://storm-project.net}. It allows to classify every new tweet, for example with a fuzzy logic approach. The so called ''Spout'' is responsible for fetching the tweets and the ''Bolts'' can do some transformation on the received data or persist them in some sort of storage. Cassandra\footnote{http://cassandra.apache.org} is an ideal solution for the given scenario, because it is a distributed, elastically scalable, highly available, fault-tolerant and column-oriented database.
@@ -54,7 +57,23 @@ The prototype resulting from this project will be a Java application based on th
 
 \section{Existing Research}
 \subsection{Twitter \& Storm}
-Storm is an open source distributed real-time computation system and programming language independent. A storm topology consists of two main components:
+\subsection{Storm with Cassandra}
+\subsection{SentiWordNet}
+
+\section{Technologies}
+
+\subsection{Storm}
+Storm is an open source distributed real-time computation system and programming language independent with the following nice properties:
+\begin{itemize}
+	\item \textbf{Easy to program} An implementation of a real-time processing tool from scratch needs a lot of time and effort. With storm, a simple working topology can be created within a few hours 
+	\item \textbf{Programming language independent} The easiest way is to develop in a JVM-based language, but Storm support any language if you use or implement a small intermediate library 
+	\item \textbf{Fault-tolerant} If a worker is going down, the cluster will reassign tasks when necessary 
+	\item \textbf{Scalable} Add or remove machines to the cluster. Storm will reassign tasks to new machines as the are available or distribute the tasks from the removed machines to the others which are still there 
+	\item \textbf{Reliable} Storm guarantees that every message will processed at least once. If an error occurs, the messages can be processed more then once. But a message will never be lost 
+	\item \textbf{Fast} Storm can process one million 100 byte per second per node on a machine with two processors (Intel E5645@2.4Ghz) and a 24 GB memory 
+\end{itemize}
+\subsubsection{Components}
+A storm topology consists of two main components:
 \begin{itemize}
 	\item Spouts are responsible to fetch the data from a source (e.g. text file, twitter streaming API)
 	\item Bolts are responsible for the transformations of the fetched data
@@ -67,12 +86,46 @@ The spout acts as the source of the data flow and the last bolt is the sink whic
 	\label{storm_example}
 \end{figure}
 All the spoken words during the TV news show will be stored in a text file. If a new sentence was written into the file the spout hands them to the responsible bolt which separate the sentence into words. This stream of words is passed to another bolt that compares each word to a list of politician's names. If there is a match, the second bolt increases the counter for that name in a storage. To check the number of occurrence, query the database which is updated in real-time.\\
-In a storm cluster there are 2 node types, a master node and worker nodes. On the master node runs a daemon called 'Nimbus', which is responsible for code distribution, assigning tasks to the worker nodes and failure monitoring. A portion of the topology is running on the worker nodes (responsible daemon is called 'Supervisor'). A topology runs across multiple worker nodes on different machines. All the daemons are stateless and can fail or restart without disturbing the system.\\
+Typical uses cases for a storm application can be:
+\begin{itemize}
+	\item \textbf{Processing streams} This is the case in shown example 
+	\item \textbf{Continuous computation} Send continuously data to the clients so they can update and display results in real-time, for example as site metrics 
+	\item \textbf{Distributed remote procedure call} Easily parallelize CPU-intensive operations
+\end{itemize}
+\subsubsection{Grouping}
+After the implementation of the spouts and bolts for the topology, they have to be connected with each other. Stream grouping defines which stream are consumed by each bolt and how they will be consumed. Strom provides different grouping types: 
+\begin{itemize}
+	\item \textbf{Shuffle} The most commonly used grouping. It sends each tuple emitted by the source to a randomly chosen bolt. If there are no dependencies between the emitted tuples (e.g. fuzzy classification of a tweet) this grouping method is used 
+	\item \textbf{Fields} Control how the tuples will be distributed, based on the emitted fields. It guarantees that a set of values for the same combination of fields will be sent to the same bolt. This is useful to implement a MapReduce functionality 
+	\item \textbf{All} Sends a single copy of each tuple to every receiving bolt (e.g. resetting a counter, refreshing a cache) 
+	\item \textbf{Custom} Create a custom stream grouping by implementing the \textit{back.type.storm.grouping.CustomStreamGrouping} interface 
+\end{itemize}
+\subsubsection{Technical Details}
+In a storm cluster there are 2 node types, a master node and worker nodes. On the master node runs a daemon called 'Nimbus', which is responsible for code distribution, assigning tasks to the worker nodes and failure monitoring. A portion of the topology is running on the worker nodes (responsible daemon is called 'Supervisor'). A topology runs across multiple worker nodes on different machines. Since Storm keeps the states of the cluster either in 'Zookeeper' or on local disk, the daemons are stateless and can fail or restart without disturbing the system.\\
+Storm uses an advanced, embeddable networking library zeromq (0mq, http://zeromq.org/), which provides features that make Storm possible. Some characteristics of zeromq:
+\begin{itemize}
+	\item Act as a concurrency framework
+	\item Faster than TCP, ideal for clustered products and supercomputers
+	\item Carries messages across in-process, IPC (inter-process communication), TCP and multicast
+	\item Asynchronous I/O model for scalable multi-core applications
+	\item Connect sockets N-to-N 
+\end{itemize}
 Storm topologies can run in two different modes. The local mode is a single Java Virtual Machine on a local machine. This mode is used for developing, testing and debugging. The other possibility is to run the software on different remote machines. But there are no debugging information in the production mode.\\
 The difference between a traditional BigData approach like Hadoop and storm is the paradigm that it addresses. Hadoop fundamentally a batch processing system. The results are available after the whole data was distributed over the whole system. The construction of topologies that transform unterminated streams of data is supported by storm. A storm topology will never stop running (until termination by user), Hadoop jobs will stop after all available data (at starting time) proceeded by the system.
 
-\subsection{Storm with Cassandra}
-\subsection{SentiWordNet}
+\subsection{Cassandra}
+"Apache Cassandra is an open source, distributed, decentralized, elastically scalable, highly  available, fault-tolerant, tuneably consistent, column-oriented database that bases its distribution design on Amazon's Dynamo and its data model on Google's Bigtable. Created at Facebook, it is now used at some of the most popular sites on the Web." 
+\subsubsection{Elastic Scalability }
+There are two different types of scaling. Add more hardware capacity and memory to the existing way is one way to handle a greater number of requests. This approach is called vertical scaling. Horizontal scaling will add more machines to distributed the incoming data over multiple nodes. This will decrease the amount of data for every machine. Elastic scalability is a specialization of the horizontal scaling where the cluster can scale up and scale back down, depending on the current load. Cassandra is able to handle new machines on-the-fly, no restart of the process or manually rebalancing of the data is required. 
+\subsubsection{High Availability and Fault Tolerance}
+Machines in the cluster will have technical issues from time to time. Cassandra is able to handle replaced failed nodes without downtime. Also replication of data to multiple data center is possible to prevent downtime if a data center experiences a catastrophe like a fire. 
+\subsubsection{Tuneable Consistency}
+Consistency means that a read operation returns the last written value from the database. But a database system cannot implement all three components of the CAP theorem and the focus of Cassandra are Availability and Partition tolerance (AP). Therefore, the consistency is not guaranteed. But it allows to configure the degree of the consistency in balance with the level of availability: 
+\begin{itemize}
+\item \textbf{Strict consistency} tbd 
+\item \textbf{Causal consistency} tbd 
+\item \textbf{Weak (eventual) consistency} tbd 
+\end{itemize}
 
 \section{Implementation}
 \subsection{Architecture}
