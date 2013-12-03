@@ -56,8 +56,36 @@ This thesis will be conducted by prototyping.
 The prototype resulting from this project will be a Java application based on the Storm library and using Cassandra for persistence. For analysing the twitter feeds, SentiWordNet will be used. 
 
 \section{Existing Research}
-\subsection{Twitter \& Storm}
-\subsection{Storm with Cassandra}
+\subsection{Twitter Trends}
+There are several papers about twitter trends available. Some interesting approaches will be discussed in this chapter.\\
+
+A few people from the Northwestern University implemented a topic classification algorithm for twitter trends \cite{classTwitterTrends}. To collect data for their experiments they used the information provided by the "What the trend" website. They downloaded tweets which correspond to over 23'000 trending topics and randomly selected 768 topics to assign them to one of 18 selected topic classes like health, politics, technology or movies. They used supervised learning techniques to classify the trends to a topic class. The provided example (Figure \ref{techClass}) shows the hottest topics in the technology class.
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.35]{images/technologyClass.png}
+	\caption{Technology class topics}
+	\label{techClass}
+\end{figure}
+
+Another paper has the focus on the trend detection \cite{monitorTwitterTrends}. Two guys from the Computer Science department at the University of Toronto developed a monitor (Figure \ref{monitorArchitecture}) for twitter trends in real-time. They split their implementation into a front and back-end part. The TwitterListener separates the tweet information into fields (tweet text, author, timestamp) and exports feeds. Text and timestamp goes to the Bursty Keywords Detection module. This module computes a set of bursty keywords for every tweet and tries to find other tweets in the past which were assigned to the same set (Bursty Keywords Grouping). If the system has found enough tweets it will create a new trend with the corresponding description (Trend Analysis). The Lucene module needs all the fields from the tweet. Apache Lucene is responsible for indexing the tweets. This is important to get feeds from the past, because the Twitter API had some restrictions for requests that date further back in time. The Interface module will present the trends on a webpage.
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.45]{images/monitorArchitecture.png}
+	\caption{Architecture of the Twitter Monitor}
+	\label{monitorArchitecture}
+\end{figure}
+
+\subsection{Sentiment Analysis}
+The sentiment analysis of a tweet is also a well-covered topic by the computer science community.\\ 
+
+Members of the University of Edinburgh wrote a paper with the title: "Twitter Sentiment Analysis: The Good, the Bad and the OMG!" \cite{sentimentAnalysisEdin}. They took tweets and did some preprocessing steps first. Replace abbreviations by their actual meaning (e.g. 'BRB' goes to 'be right back') and repeated characters are replaced by single characters (e.g. 'happyyyy' goes to 'happy'). Finally, each word was assigned to a POS-tag (Part-of-Speech). After that, a number of feature values was calculated. The n-gram feature which is a contiguous sequence of n items from a given tweet. The Part-of-Speech feature count the number of verbs, adverbs, adjectives, nouns and any others. The MPQA subjectivity lexicon (similar to SentiWordNet) was used to calculate a positive, negative and neutral value based on the presence of any words from the lexicon. Emoticons and abbreviations - Micro-blogging feature - define a feature too (by the use of the Internet Lingo Dictionary and various internet slang dictionaries). To train an AdaBost model they used over 20'000 tweets. The usage of the Part-of-Speech feature didn't improve the performance of the classifier. The micro-blogging feature was clearly the most useful. With the best combination of the features they get an average accuracy of 0.75 on different test sets (Figure \ref{sentimentAccuracy}).
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5]{images/sentimentAccuracy.png}
+	\caption{Average accuracy with different features}
+	\label{sentimentAccuracy}
+\end{figure}
+
 \subsection{SentiWordNet}
 
 \section{Technologies}
@@ -186,7 +214,7 @@ The \textit{FuzzyBolt} class is the first bolt in the whole Storm process and re
 
 \section{Conclusion}
 
-
+\newpage
 
 \section{References}
 \bibliography{diva_group}
@@ -235,11 +263,25 @@ The \textit{FuzzyBolt} class is the first bolt in the whole Storm process and re
 	Tilmann Rabl, Mohammad Sadoghi, Hans-Arno Jacobsen, Sergio Gomez-Villamor, Victor Muntes-Mulero, Serge Mankovskii
 	\newblock{\em Solving Big Data Challenges for Enterprise Application Performance Management}
 	\newblock available: \url{http://vldb.org/pvldb/vol5/p1724_tilmannrabl_vldb2012.pdf}, accessed 2nd December 2013.
+
+	\bibitem{classTwitterTrends}
+	Kathy Lee, Diana Palsetia, Ramanathan Narayanan, Mostofa Ali Patwary, Ankit Agrawal, and Alok Choudhary
+	\newblock{\em Twitter Trending Topic Classification}
+	\newblock available: \url{http://cucis.eecs.northwestern.edu/publications/pdf/LeePal11.pdf}, accessed 3nd December 2013.
+
+	\bibitem{monitorTwitterTrends}
+	Michael Mathioudakis, Nick Koudas
+	\newblock{\em TwitterMonitor: Trend Detection over the Twitter Stream}
+	\newblock available: \url{http://snap.stanford.edu/class/cs224w-readings/mathioudakis10twitter.pdf}, accessed 3nd December 2013.
 	
+	\bibitem{sentimentAnalysisEdin}
+	Efthymios Kouloumpis, Theresa Wilson, Johanna Moore
+	\newblock{\em Twitter Sentiment Analysis: The Good the bad and the OMG!}
+	\newblock available: \url{http://crowdsourcing-class.org/assignments/downloads/kouloumpis-et-al.pdf}, accessed 3nd December 2013.
+
 	\newblock{}
 	\newblock{}
 	
-		
 \end{thebibliography}
 
 
