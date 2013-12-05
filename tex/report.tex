@@ -81,15 +81,15 @@ The number of new tweets per second on the social media platform Twitter\footnot
 \subsubsection{Research Questions}\label{research_questions}
 \vspace{0.5cm}
 \begin{itemize}
-\item How can fuzzy classifications be applied to twitter feeds using storm?
-\item How can the results of such classifications be stored in a cassandra column store?
+\item How can fuzzy classifications be applied to Twitter feeds using Storm?
+\item How can the results of such classifications be stored in a Cassandra column store?
 \end{itemize}
 
 
 
 \subsection{Objectives}
 
-The main objective of this seminar project is to develop a simple prototype, which uses storm to fuzzily classify messages from twitter feeds and store the results in a Cassandra NoSQL database.
+The main objective of this seminar project is to develop a simple prototype, which uses Storm to fuzzily classify messages from twitter feeds and store the results in a Cassandra NoSQL database.
 The resulting application will use Storm on local system only (not on a cluster). Furthermore, only one fuzzy concept will be implemented in combination with a simple semantic analysis of the twitter feeds. However, the prototype shall be easily extensible with more complex analytics and further fuzzy concepts.
 
 
@@ -102,7 +102,7 @@ The prototype resulting from this project will be a Java application based on th
 \subsection{Twitter Trends}
 There are several papers about twitter trends available. Some interesting approaches will be discussed in this chapter.\\
 
-A few people from the Northwestern University implemented a topic classification algorithm for twitter trends \cite{leeEtAl2011}. To collect data for their experiments they used the information provided by the "What the trend" website. They downloaded tweets which correspond to over 23'000 trending topics and randomly selected 768 topics to assign them to one of 18 selected topic classes like health, politics, technology or movies. They used supervised learning techniques to classify the trends to a topic class. The provided example (Figure \ref{techClass}) shows the hottest topics in the technology class.
+A few people from the Northwestern University implemented a topic classification algorithm for Twitter trends \cite{leeEtAl2011}. To collect data for their experiments they used the information provided by the "What the trend"\footnote{http://whatthetrend.com/} website. They downloaded tweets which correspond to over 23'000 trending topics and randomly selected 768 topics to assign them to one of 18 selected topic classes like \textit{health, politics, technology} or \textit{movies}. They used supervised learning techniques to classify the trends to a topic class. The provided example (Figure \ref{techClass}) shows the hottest topics in the \textit{technology} class.
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.35]{images/technologyClass.png}
@@ -110,7 +110,7 @@ A few people from the Northwestern University implemented a topic classification
 	\label{techClass}
 \end{figure}
 
-Another paper has the focus on the trend detection \cite{Mathioudakis2010}. Two guys from the Computer Science department at the University of Toronto developed a monitor (Figure \ref{monitorArchitecture}) for twitter trends in real-time. They split their implementation into a front and back-end part. The TwitterListener separates the tweet information into fields (tweet text, author, timestamp) and exports feeds. Text and timestamp goes to the Bursty Keywords Detection module. This module computes a set of bursty keywords for every tweet and tries to find other tweets in the past which were assigned to the same set (Bursty Keywords Grouping). If the system has found enough tweets it will create a new trend with the corresponding description (Trend Analysis). The Lucene module needs all the fields from the tweet. Apache Lucene is responsible for indexing the tweets. This is important to get feeds from the past, because the Twitter API had some restrictions for requests that date further back in time. The Interface module will present the trends on a webpage.
+Another paper has the focus on the trend detection \cite{Mathioudakis2010}. Two guys from the computer science department at the University of Toronto developed a monitor (Figure \ref{monitorArchitecture}) for Twitter trends in real-time. They split their implementation into a front and back-end part. The \textit{TwitterListener} separates the tweet information into fields (tweet text, author, timestamp) and exports two feeds. Text and timestamp goes to the \textit{Bursty Keywords Detection} module. This module computes a set of bursty keywords for every tweet and tries to find other tweets in the past which were assigned to the same set (\textit{Bursty Keywords Grouping}). If the system has found enough tweets it will create a new trend with the corresponding description (\textit{Trend Analysis}). The \textit{Lucene}\footnote{http://lucene.apache.org/core/} module needs all the fields from the tweet. Apache Lucene is responsible for indexing the tweets. This is important to get feeds from the past, because the Twitter API had some restrictions for requests that date further back in time. The \textit{Interface} module will present the trends on a webpage.
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.45]{images/monitorArchitecture.png}
@@ -121,7 +121,7 @@ Another paper has the focus on the trend detection \cite{Mathioudakis2010}. Two 
 \subsection{Sentiment Analysis}
 The sentiment analysis of a tweet is also a well-covered topic by the computer science community.\\ 
 
-Members of the University of Edinburgh wrote a paper with the title: "Twitter Sentiment Analysis: The Good, the Bad and the OMG!" \cite{KouloumpisWM11}. They took tweets and did some preprocessing steps first. Replace abbreviations by their actual meaning (e.g. 'BRB' goes to 'be right back') and repeated characters are replaced by single characters (e.g. 'happyyyy' goes to 'happy'). Finally, each word was assigned to a POS-tag (Part-of-Speech). After that, a number of feature values was calculated. The n-gram feature which is a contiguous sequence of n items from a given tweet. The Part-of-Speech feature count the number of verbs, adverbs, adjectives, nouns and any others. The MPQA subjectivity lexicon (similar to SentiWordNet) was used to calculate a positive, negative and neutral value based on the presence of any words from the lexicon. Emoticons and abbreviations - Micro-blogging feature - define a feature too (by the use of the Internet Lingo Dictionary and various internet slang dictionaries). To train an AdaBost model they used over 20'000 tweets. The usage of the Part-of-Speech feature didn't improve the performance of the classifier. The micro-blogging feature was clearly the most useful. With the best combination of the features they get an average accuracy of 0.75 on different test sets (Figure \ref{sentimentAccuracy}).
+Members of the University of Edinburgh wrote a paper with the title: "Twitter Sentiment Analysis: The Good, the Bad and the OMG!" \cite{KouloumpisWM11}. They took tweets and did some preprocessing steps first. Replace abbreviations by their actual meaning (e.g. 'BRB' goes to 'be right back') and repeated characters are replaced by single characters (e.g. 'happyyyy' goes to 'happy'). Finally, each word was assigned to a POS-tag (Part-of-Speech). After that, a number of feature values was calculated. The \textit{n}-gram feature which is a contiguous sequence of \textit{n} items from a given tweet. The Part-of-Speech feature count the number of verbs, adverbs, adjectives, nouns and any others. The MPQA subjectivity lexicon\footnote{http://mpqa.cs.pitt.edu/lexicons/subj\_lexicon/} (similar to SentiWordNet) was used to calculate a positive, negative and neutral value based on the presence of any words from the lexicon. Emoticons and abbreviations - Micro-blogging feature - define a feature too (by the use of the Internet Lingo Dictionary and various internet slang dictionaries). To train an AdaBost model they used over 20'000 tweets. The usage of the Part-of-Speech feature didn't improve the performance of the classifier. The micro-blogging feature was clearly the most useful. With the best combination of the features they get an average accuracy of 0.75 on different test sets (Figure \ref{sentimentAccuracy}).
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.5]{images/sentimentAccuracy.png}
@@ -136,20 +136,20 @@ Members of the University of Edinburgh wrote a paper with the title: "Twitter Se
 \subsection{Storm}
 Storm is an open source distributed real-time computation system and programming language independent with the following nice properties:
 \begin{itemize}
-	\item \textbf{Easy to program} An implementation of a real-time processing tool from scratch needs a lot of time and effort. With storm, a simple working topology can be created within a few hours 
+	\item \textbf{Easy to program} An implementation of a real-time processing tool from scratch needs a lot of time and effort. With Storm, a simple working topology can be created within a few hours 
 	\item \textbf{Programming language independent} The easiest way is to develop in a JVM-based language, but Storm support any language if you use or implement a small intermediate library 
-	\item \textbf{Fault-tolerant} If a worker is going down, the cluster will reassign tasks when necessary 
-	\item \textbf{Scalable} Add or remove machines to the cluster. Storm will reassign tasks to new machines as the are available or distribute the tasks from the removed machines to the others which are still there 
+	\item \textbf{Fault-tolerant} If a \textit{worker} is going down, the cluster will reassign tasks when necessary 
+	\item \textbf{Scalable} Add or remove machines to the cluster. Storm will reassign tasks to new machines as they are available or distribute the tasks from the removed machines to the others which are still there 
 	\item \textbf{Reliable} Storm guarantees that every message will processed at least once. If an error occurs, the messages can be processed more then once. But a message will never be lost 
 	\item \textbf{Fast} Storm can process one million 100 byte per second per node on a machine with two processors (Intel E5645@2.4Ghz) and a 24 GB memory 
 \end{itemize}
 \subsubsection{Components}\label{storm_components}
-A storm topology consists of two main components:
+A Storm \textit{topology} consists of two main components:
 \begin{itemize}
-	\item Spouts are responsible to fetch the data from a source (e.g. text file, twitter streaming API)
-	\item Bolts are responsible for the transformations of the fetched data
+	\item \textit{Spouts} are responsible to fetch the data from a source (e.g. text file, Twitter streaming API)
+	\item \textit{Bolts} are responsible for the transformations of the fetched data
 \end{itemize}
-The spout acts as the source of the data flow and the last bolt is the sink which store the output to a database. The output of one component goes always to the input of the next, therefore no data will flow through an already visited node. A simple example should help to illustrate the components of the storm architecture (Figure \ref{storm_example}):\\
+The spout acts as the source of the data flow and the last bolt is the sink which store the output to a database. The output of one component goes always to the input of the next, therefore no data will flow through an already visited node. A simple example should help to illustrate the components of the Storm architecture (Figure \ref{storm_example}):\\
 
 \begin{figure}[h!]
 	\centering
@@ -158,9 +158,9 @@ The spout acts as the source of the data flow and the last bolt is the sink whic
 	\label{storm_example}
 \end{figure}
 All the spoken words during the TV news show will be stored in a text file. If a new sentence was written into the file the spout hands them to the responsible bolt which separate the sentence into words. This stream of words is passed to another bolt that compares each word to a list of politician's names. If there is a match, the second bolt increases the counter for that name in a storage. To check the number of occurrence, query the database which is updated in real-time.\\
-Typical uses cases for a storm application can be:
+Typical uses cases for a Storm application can be:
 \begin{itemize}
-	\item \textbf{Processing streams} This is the case in shown example 
+	\item \textbf{Processing streams} This is the case in the shown example 
 	\item \textbf{Continuous computation} Send continuously data to the clients so they can update and display results in real-time, for example as site metrics 
 	\item \textbf{Distributed remote procedure call} Easily parallelize CPU-intensive operations
 \end{itemize}
@@ -174,7 +174,7 @@ After the implementation of the spouts and bolts for the topology, they have to 
 \textit{back.type.storm.grouping.CustomStreamGrouping} interface 
 \end{itemize}
 \subsubsection{Technical Details}
-In a storm cluster there are 2 node types, a master node and worker nodes. On the master node runs a daemon called 'Nimbus', which is responsible for code distribution, assigning tasks to the worker nodes and failure monitoring. A portion of the topology is running on the worker nodes (responsible daemon is called 'Supervisor'). A topology runs across multiple worker nodes on different machines. Since Storm keeps the states of the cluster either in 'Zookeeper' or on local disk, the daemons are stateless and can fail or restart without disturbing the system.\\
+In a Storm cluster there are 2 node types, a \textit{master} node and \textit{worker} nodes. On the master node runs a daemon called '\textit{Nimbus}', which is responsible for code distribution, assigning tasks to the worker nodes and failure monitoring. A portion of the topology is running on the worker nodes (responsible daemon is called 'Supervisor'). A topology runs across multiple worker nodes on different machines. Since Storm keeps the states of the cluster either in '\textit{Zookeeper}' or on local disk, the daemons are stateless and can fail or restart without disturbing the system.\\
 Storm uses an advanced, embeddable networking library zeromq (0mq, http://zeromq.org/), which provides features that make Storm possible. Some characteristics of zeromq:
 \begin{itemize}
 	\item Act as a concurrency framework
@@ -183,14 +183,14 @@ Storm uses an advanced, embeddable networking library zeromq (0mq, http://zeromq
 	\item Asynchronous I/O model for scalable multi-core applications
 	\item Connect sockets N-to-N 
 \end{itemize}
-Storm topologies can run in two different modes. The local mode is a single Java Virtual Machine on a local machine. This mode is used for developing, testing and debugging. The other possibility is to run the software on different remote machines. But there are no debugging information in the production mode.\\
+Storm topologies can run in two different modes. The \textit{local} mode is a single Java Virtual Machine on a local machine. This mode is used for developing, testing and debugging. The other possibility is to run the software on different \textit{remote} machines. But there are no debugging information in the production mode.\\
 
-The difference between a traditional BigData approach like Hadoop and storm is the paradigm that it addresses. Hadoop fundamentally a batch processing system. The results are available after the whole data was distributed over the whole system. The construction of topologies that transform unterminated streams of data is supported by storm. A storm topology will never stop running (until termination by user), Hadoop jobs will stop after all available data (at starting time) proceeded by the system.
+The difference between a traditional BigData approach like Hadoop\footnote{http://hadoop.apache.org/} and Storm is the paradigm that it addresses. Hadoop fundamentally a batch processing system. The results are available after the whole data was distributed over the whole system. The construction of topologies that transform unterminated streams of data is supported by Storm. A Storm topology will never stop running (until termination by user), Hadoop jobs will stop after all available data (at starting time) proceeded by the system.
 
 \subsection{Cassandra}
 Eben Hewitt explained Cassandra with only 50 words \cite{hewitt2010cassandra}:\\
 
-"Apache Cassandra is an open source, distributed, decentralized, elastically scalable, highly  available, fault-tolerant, tuneably consistent, column-oriented database that bases its distribution design on Amazon's Dynamo and its data model on Google's Bigtable. Created at Facebook, it is now used at some of the most popular sites on the Web."\\
+"Apache Cassandra is an open source, distributed, decentralized, elastically scalable, highly  available, fault-tolerant, tuneably consistent, column-oriented database that bases its distribution design on Amazon's Dynamo and its data model on Google's Bigtable\cite{chang2008bigtable}. Created at Facebook, it is now used at some of the most popular sites on the Web."\\
 
 The data store is an open source Apache project available at http://cassandra.apache.org. Cassandra originated at Facebook in 2007. It should solve the company's inbox search problem, because they had to deal with large volumes of data. The project was moved to Apache in March 2009.
 
@@ -202,22 +202,22 @@ There are two different types of scaling. Add more hardware capacity and memory 
 \paragraph{High Availability and Fault Tolerance}
 Machines in the cluster will have technical issues from time to time. Cassandra is able to handle replaced failed nodes without downtime. Also replication of data to multiple data center is possible to prevent downtime if a data center experiences a catastrophe like a fire. 
 \paragraph{Tuneable Consistency}
-Consistency means that a read operation returns the last written value from the database. But a database system cannot implement all three components of the CAP theorem and the focus of Cassandra are Availability and Partition tolerance (AP). Therefore, the consistency is not guaranteed. But it allows to configure the degree of the consistency in balance with the level of availability: 
+Consistency means that a read operation returns the last written value from the database. But a database system cannot implement all three components of the CAP theore and the focus of Cassandra are Availability and Partition tolerance (AP). Therefore, the consistency is not guaranteed. But it allows to configure the degree of the consistency in balance with the level of availability: 
 \begin{itemize}
 	\item \textbf{Strict consistency} Also called sequential consistency. It's the highest level of consistency and it requires that a read will always return the recently written value in the database. If you have only a single machine with one processor (and one processor clock) the last written value is easy to find. But if there are geographically dispersed data centers, it becomes much more slippery. A global clock which can timestamp all operations, regardless of the data location or how many services are needed to determine the response, is required 
 	\item \textbf{Causal consistency} A weaker form of the strict approach. It uses a much more semantic approach and it does away with the fantasy of a single clock which can be synchronized without creating a bottleneck. The idea is that writes which are potentially related must be read in sequence. Writes are inferred not to be causally related, if two operations suddenly write to the same filed (operations must be different and unrelated). But if there is enough time between two write operations, we assume that they are causally related. Therefore, causal consistency says that causal writes must be read in sequence 
 	\item \textbf{Weak (eventual) consistency} All updates will propagate throughout all of the machines in a distributed system. Of course, this will take some time. But It could be possible that all replicas will be consistent 
 \end{itemize}
-The user of Cassandra can control the number of replicas to block on for all updates (Tunable consistency). This can be done by setting the level of consistency against the replication factor. With the replication factor the client can define the level of consistency, but a higher level implies a lower performance of the system. The factor controls the number of nodes in the cluster where you want to distribute the updates (add, update and delete). The number of replicas which have to acknowledge a write operation or respond to a read operation to declare this operation as successful is defined by the consistency level.
+The user of Cassandra can control the number of replicas to block on for all updates (Tunable consistency). This can be done by setting the \textit{level of consistency} against the \textit{replication factor}. With the replication factor the client can define the level of consistency, but a higher level implies a lower performance of the system. The factor controls the number of nodes in the cluster where you want to distribute the updates (add, update and delete). The number of replicas which have to acknowledge a write operation or respond to a read operation to declare this operation as successful is defined by the consistency level.
 
 \paragraph{Raw-Oriented}
-Cassandra is a column-oriented database, it represents it's data structures in sparse multidimensional hashtables. For every given row you can have many columns, but they doesn't have to be the all the same like in the relational model. A unique key makes the data accessible. One advantage of Cassandra is that you don't have to define what the data structure must look like or what fields you will need. This implies also that you can add or remove new fields on the fly without disturbing the system. This is ideal if you use an agile development methodology and you don't have time to define the entire database schema at the beginning of the project.
+Cassandra is a column-oriented database, it represents their data structures in sparse, multidimensional hashtables. For every given row you can have many columns, but they doesn't have to be the all the same like in the relational model. A unique key makes the data accessible. One advantage of Cassandra is that you don't have to define what the data structure must look like or what fields you will need. This implies also that you can add or remove new fields on-the-fly without disturbing the system. This is ideal if you use an agile development methodology and you don't have time to define the entire database schema at the beginning of the project.
 
 \paragraph{Schema-Free}
-The first step to define a Cassandra database is the creation of a keyspace which is a logical namespace to hold column families and some configuration properties (e.g. replication factor). The column families are names for associated data and a sort order. Because the tables are sparse, the data can just be added using arbitrary columns. There is no need for modeling data up front using data modeling tools and then creating queries with complex join statements. With Cassandra, the user can first create the queries and the system will provide the data around them.
+The first step to define a Cassandra database is the creation of a \textit{keyspace} which is a logical namespace to hold \textit{column families} and some configuration properties (e.g. replication factor). The column families are names for associated data and a sort order. Because the tables are sparse, the data can just be added using arbitrary columns. There is no need for modeling data up front using data modeling tools and then creating queries with complex join statements. With Cassandra, the user can first create the queries and the system will provide the data around them.
 
 \paragraph{High Performance}
-Cassandra was designed to take full advantage of multiprocessor/multicore machines and run on multiple of these machines in data centers. It should be scale to hundreds of terabytes and stay consistent. People from the university of Toronto analysed the performance of Cassandra \cite{rabEtAl2012}. They defined some different workloads to create some scenarios. One was with 50\% inserts, 25\% reads and 25\% scans. Two independent clusters are used where each has about 16 Linux nodes (Intel Xeon quad core CPU's, 16GB of RAM, 148GB disk space). The nodes are connected with a gigabit Ethernet network over a single switch. The strength of Cassandra is clearly visible (Figure \ref{throughput_cassandra}), because the throughput with only one node is lower than other ones. If the number of nodes was increased, the gap between Cassandra and all the other tested systems is huge.
+Cassandra was designed to take full advantage of multiprocessor/multicore machines and run on multiple of these machines in data centers. It should be scale to hundreds of terabytes and stay consistent. People from the University of Toronto analysed the performance of Cassandra \cite{rabEtAl2012}. They defined some different workloads to create scenarios. One was with 50\% inserts, 25\% reads and 25\% scans. Two independent clusters are used where each has about 16 Linux nodes (Intel Xeon quad core CPU's, 16GB of RAM, 148GB disk space). The nodes are connected with a gigabit Ethernet network over a single switch. The strength of Cassandra is clearly visible (Figure \ref{throughput_cassandra}), because the throughput with only one node is lower than other ones. If the number of nodes was increased, the gap between Cassandra and all the other tested systems is significant.
 
 \begin{figure}[h!]
 	\centering
@@ -231,7 +231,7 @@ The authors of the paper concluded their paper with the following words:\\
 "In terms of scalability, there is a clear winner throughout our experiments. Cassandra achieves the highest throughput for the maximum number of nodes in all experiments with a linear increasing throughput from 1 to 12 nodes."
 
 \subsubsection{Data model}
-Cassandra using the data model from the BigTable \cite{chang2008bigtable} approach from Google. To illustrate the components of this model we take a look at an example application. Assume the user want to store a large collection of webpages and some further information. BigTable is a persistent, multidimensional sorted map and the map is indexed by a row key, column key and a timestamp. For the webpage collection the URLs are the row keys, various aspects of the webpages are column names. Assume the CNN site want the be stored (Figure \ref{model_bigtable}).
+Cassandra using the data model from the BigTable \cite{chang2008bigtable} approach from Google. To illustrate the components of this model we take a look at an example application. Assume the user want to store a large collection of webpages and some further information. BigTable is a persistent, multidimensional sorted map and the map is indexed by a \textit{row} key, \textit{column} key and a \textit{timestamp}. For the webpage collection the URLs are the row keys, various aspects of the webpages are column names. Assume the CNN site want to be stored (Figure \ref{model_bigtable}).
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.4]{images/modelBigTable.png}
@@ -244,7 +244,7 @@ The row name is the reversed URL. The map is sorted by the row key and we want t
 \section{Implementation}
 \subsection{Architecture}
 \subsection{SentiWordNet Analysis}
-SentiNetWord is an English dictionary for opinion mining (OM, also known as sentiment classification). The goal was to decide for every word of the WordNet if it has a positive, negative or neutral meaning. WordNet is a large lexical database of nouns, verbs, adjectives and adverbs provided by the Princeton University. The developers calculated for every word three values between 0.0 and 1.0 and they had to sum up to one. They labelled different entries of the dictionary manually to define a ground truth for the training set. Then a set of classifiers was trained with the provided data. After these steps the classifiers were able to calculate the corresponding values of the remaining words which weren't in the training data samples. Since the first version of SentiWordNet in 2006 a lot of improvements are done, the actual version is 3.0.0. It's freely available for research approaches.\\
+SentiNetWord\footnote{http://sentiwordnet.isti.cnr.it/} is an English dictionary for opinion mining (OM, also known as sentiment classification). The goal was to decide for every word of the WordNet\footnote{http://wordnet.princeton.edu/} if it has a positive, negative or neutral meaning. WordNet is a large lexical database of nouns, verbs, adjectives and adverbs provided by the Princeton University. The developers calculated for every word three values between 0.0 and 1.0 and they had to sum up to one. They labelled different entries of the dictionary manually to define a ground truth for the training set. Then a set of classifiers was trained with the provided data. After these steps the classifiers were able to calculate the corresponding values of the remaining words which weren't in the training data samples. Since the first version of SentiWordNet in 2006 a lot of improvements are done, the actual version is 3.0.0. It's freely available for research approaches.\\
 The dictionary consists of 117'659 entries (69.8\% nouns, 15.4\% adjectives, 11.7\% verbs and 3.1\% adverbs). If we take a closer look at the calculated values (in SentiNetWord 1.0.0) we can see that most of the words are objective (about eighty percent are greater than 0.75). Only a few words are positive (0.48\% \textgreater \ 0.75; about 560 words) or negative (1.28\% \textgreater \ 0.75; about 1500 words).\\
 The resulting dictionary can be downloaded on the research website of SentiWordNet and has the following columns (tab separated):
 \begin{enumerate}
