@@ -78,7 +78,7 @@ The number of new tweets per second on the social media platform Twitter\footnot
 
 \subsection{Problem Statement}
 
-\subsubsection{Research Questions}
+\subsubsection{Research Questions}\label{research_questions}
 \vspace{0.5cm}
 \begin{itemize}
 \item How can fuzzy classifications be applied to twitter feeds using storm?
@@ -143,7 +143,7 @@ Storm is an open source distributed real-time computation system and programming
 	\item \textbf{Reliable} Storm guarantees that every message will processed at least once. If an error occurs, the messages can be processed more then once. But a message will never be lost 
 	\item \textbf{Fast} Storm can process one million 100 byte per second per node on a machine with two processors (Intel E5645@2.4Ghz) and a 24 GB memory 
 \end{itemize}
-\subsubsection{Components}
+\subsubsection{Components}\label{storm_components}
 A storm topology consists of two main components:
 \begin{itemize}
 	\item Spouts are responsible to fetch the data from a source (e.g. text file, twitter streaming API)
@@ -276,14 +276,24 @@ The \textit{FuzzyBolt} class is the first bolt in the whole Storm process and re
 	\label{uml_fuzzy}
 \end{figure}
 \subsection{Data Collection}
+To access Twitter data, a Storm Spout (cf. \ref{storm_components}) was created.
 \subsection{Classification}
+As stated in chapter \ref{research_questions}, the goal of the implementation is to enable fuzzy classification of tweets. To achieve fuzzy classification, two steps are necessary. First, there has to be a mapping of numerical values to the tweets. This step will e referred to as discrete classification in the following. Second, a fuzzy membership function must be applied to this discrete classification. This step is called fuzzy classification. This chapter details the implementation of these steps in the presented prototype.\\
+
 \subsubsection{Discrete Classification}
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=2.5]{images/uml_discrete.png}
 	\caption{Discrete Classification - Interface and Sample Implementation}
-	\label{uml_fuzzy}
+	\label{uml_discrete}
 \end{figure}
+To enable discrete classification, the prototype provides an interface \texttt{DiscreteClassification<T>}. The interface is generically typed with type T, which needs to be an extension of the Java Number class (\texttt{java.lang.Number}). This generic typing provides the possibility to map different types of numerical values to tweets, such as integers or floating point numbers. An implementation of the interface specifies the numerical type according to the mapping or calculation it performs.\\
+In order to achieve numerical classification of tweets, an implementation needs to specify a range of possible values, as well as the actual calculation of these values. Accordingly, the interface provides the following methods (as depicted in figure~\ref{uml_discrete}):
+\begin{itemize}
+\item \texttt{getMinValue()}: This method returns the minimum value of the classification range.
+\item \texttt{getMaxValue()}: This method returns the maximum value of the classification range.
+\item \texttt{getClassifications()}: The actual calculation of the numerical values. As input, the method receives the tweet in form of a \texttt{Tuple}, which is a wrapper class used by Storm. Currently, the interface is designed as to support word-by-word classification of the tweets, therefore it returns a map which relates the word (map key) to the calculated numerical value (map value).
+\end{itemize}\\
 \subsubsection{Fuzzy Classification}
 \begin{figure}[h!]
 	\centering
@@ -302,10 +312,11 @@ The \textit{FuzzyBolt} class is the first bolt in the whole Storm process and re
 \subsection{Extensibility: API}
 
 \section{Conclusion}
+\subsection{Future Work}
 
 
 
-\newpage
+\clearpage
 
 \selectlanguage{English}
 \bibliographystyle{plain}
