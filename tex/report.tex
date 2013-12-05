@@ -231,7 +231,7 @@ The authors of the paper concluded their paper with the following words:\\
 "In terms of scalability, there is a clear winner throughout our experiments. Cassandra achieves the highest throughput for the maximum number of nodes in all experiments with a linear increasing throughput from 1 to 12 nodes."
 
 \subsubsection{Data model}
-Cassandra using the data model from the BigTable \cite{paperBigTable} approach from Google. To illustrate the components of this model we take a look at an example application. Assume the user want to store a large collection of webpages and some further information. BigTable is a persistent, multidimensional sorted map and the map is indexed by a row key, column key and a timestamp. For the webpage collection the URLs are the row keys, various aspects of the webpages are column names. Assume the CNN site want the be stored (Figure \ref{model_bigtable}).
+Cassandra using the data model from the BigTable \cite{chang2008bigtable} approach from Google. To illustrate the components of this model we take a look at an example application. Assume the user want to store a large collection of webpages and some further information. BigTable is a persistent, multidimensional sorted map and the map is indexed by a row key, column key and a timestamp. For the webpage collection the URLs are the row keys, various aspects of the webpages are column names. Assume the CNN site want the be stored (Figure \ref{model_bigtable}).
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.4]{images/modelBigTable.png}
@@ -258,7 +258,6 @@ The resulting dictionary can be downloaded on the research website of SentiWordN
 The neutral (objective) score of the word can be calculated by 1 - (Positive score + Negative score).
 
 \subsection{Fuzzy Concept Implementation}
-
 To delegate the creation of the model with the implemented fuzzy approach to the \textit{FuzzyBolt} class, a Parameterized Factory Method pattern is used. It's possible to create a new fuzzy model approach by extending the \textit{FuzzyModel} class and modify the \textit{FuzzyModelFactory} to make the object creation of the corresponding model accessible. The selection of the new approach can be done by the following statements:
 \lstset{language=Java}
 \begin{lstlisting}
@@ -378,12 +377,12 @@ The \textit{FuzzyBolt} class is the first bolt in the whole Storm process and re
 	Efthymios Kouloumpis, Theresa Wilson, Johanna Moore
 	\newblock{\em Twitter Sentiment Analysis: The Good the bad and the OMG!}
 	\newblock available: \url{http://crowdsourcing-class.org/assignments/downloads/kouloumpis-et-al.pdf}, accessed 3nd December 2013.
-
-\bibitem{paperBigTable}
+	
+	\bibitem{paperBigTable}
 	Fay Chang, Jeffrey Dean, Sanjay Ghemawat, Wilson Hsieh, Deborah Wallach, Mike Burrows, Tushar Chandra, Andrew Fikes, Rober Gruber
 	\newblock{\em Bigtable: A Distributed Storage System for Structured Data}
 	\newblock available: \url{http://research.google.com/archive/bigtable-osdi06.pdf}, accessed 5nd December 2013.
-	
+
 	\bibitem{faseld2012}
 	Daniel Fasel
 	\newblock{\em Concept and Implementation of a Fuzzy Data Warehouse}
