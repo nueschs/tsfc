@@ -1,7 +1,8 @@
-package ch.unibnf.sfdwh.tscf.bolts;
+package ch.unibnf.sfdwh.tscf.bolts.factory;
 
 import java.io.IOException;
 
+import ch.unibnf.sfdwh.tscf.bolts.SentiWordNetBolt;
 import ch.unibnf.sfdwh.tscf.discrete.DiscreteClassification;
 import ch.unibnf.sfdwh.tscf.discrete.SentiWordNetClassification;
 import ch.unibnf.sfdwh.tscf.discrete.Sentiment;

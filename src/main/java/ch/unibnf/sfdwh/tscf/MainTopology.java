@@ -8,7 +8,7 @@ import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.topology.TopologyBuilder;
 import ch.unibnf.sfdwh.tscf.bolts.CassandraBolt;
 import ch.unibnf.sfdwh.tscf.bolts.SentiWordNetBolt;
-import ch.unibnf.sfdwh.tscf.bolts.SentiWordNetFactory;
+import ch.unibnf.sfdwh.tscf.bolts.factory.SentiWordNetFactory;
 import ch.unibnf.sfdwh.tscf.spouts.TwitterSpout;
 
 public class MainTopology {

@@ -6,7 +6,50 @@
 \usepackage[colorlinks=false, pdfborder={0 0 0}]{hyperref}
 \usepackage{verbatim}
 \usepackage{hyperref}
+\usepackage{cite}
+\usepackage[english]{babel}
 \usepackage{listings}
+\usepackage{color}
+\definecolor{javared}{rgb}{0.6,0,0} % for strings
+\definecolor{javagreen}{rgb}{0.25,0.5,0.35} % comments
+\definecolor{javapurple}{rgb}{0.5,0,0.35} % keywords
+\definecolor{javadocblue}{rgb}{0.25,0.35,0.75} % javadoc
+
+
+\lstset{language=Java,
+basicstyle=\ttfamily,
+keywordstyle=\color{javapurple}\bfseries,
+stringstyle=\color{javared},
+commentstyle=\color{javagreen},
+morecomment=[s][\color{javadocblue}]{/**}{*/},
+numbers=left,
+numberstyle=\tiny\color{black},
+stepnumber=2,
+numbersep=10pt,
+tabsize=4,
+showspaces=false,
+showstringspaces=false}
+
+\begingroup
+    \catcode `\@ = 11
+    \catcode `\~ = 13
+    \catcode `\% = 12
+    \protected\long\gdef\cmt@remove#1%~{\endgroup}
+    \ifdefined~
+        \global\let\cmt@old~
+    \else
+        \global\let\cmt@old\relax
+    \fi
+    \protected\gdef~{\begingroup\catcode`%=12
+        \futurelet\next\cmt@}
+    \protected\gdef\cmt@
+      {\ifx%\next
+           \expandafter\cmt@remove
+       \else
+           \endgroup\expandafter\cmt@old
+       \fi}
+\endgroup
+
 
 \setcounter{secnumdepth}{4}
 \setcounter{tocdepth}{4}
@@ -33,9 +76,9 @@
 
 The number of new tweets per second on the social media platform Twitter\footnote{https://www.twitter.com} is huge (over hundred thousand per second). To handle such a big amount of data, a scalable, fault-tolerant real-time framework has to be used. Storm was benchmarked at processing one million 100 byte messages per second per node\footnote{http://storm-project.net}. It allows to classify every new tweet, for example with a fuzzy logic approach. The so called ''Spout'' is responsible for fetching the tweets and the ''Bolts'' can do some transformation on the received data or persist them in some sort of storage. Cassandra\footnote{http://cassandra.apache.org} is an ideal solution for the given scenario, because it is a distributed, elastically scalable, highly available, fault-tolerant and column-oriented database.
 
-\section{Problem Statement}
+\subsection{Problem Statement}
 
-\subsection{Research Questions}
+\subsubsection{Research Questions}
 \vspace{0.5cm}
 \begin{itemize}
 \item How can fuzzy classifications be applied to twitter feeds using storm?
@@ -44,13 +87,13 @@ The number of new tweets per second on the social media platform Twitter\footnot
 
 
 
-\section{Objectives}
+\subsection{Objectives}
 
 The main objective of this seminar project is to develop a simple prototype, which uses storm to fuzzily classify messages from twitter feeds and store the results in a Cassandra NoSQL database.
 The resulting application will use Storm on local system only (not on a cluster). Furthermore, only one fuzzy concept will be implemented in combination with a simple semantic analysis of the twitter feeds. However, the prototype shall be easily extensible with more complex analytics and further fuzzy concepts.
 
 
-\section{Methodology}
+\subsection{Methodology}
 This thesis will be conducted by prototyping. 
 \subsection{Prototype}
 The prototype resulting from this project will be a Java application based on the Storm library and using Cassandra for persistence. For analysing the twitter feeds, SentiWordNet will be used. 
@@ -59,7 +102,7 @@ The prototype resulting from this project will be a Java application based on th
 \subsection{Twitter Trends}
 There are several papers about twitter trends available. Some interesting approaches will be discussed in this chapter.\\
 
-A few people from the Northwestern University implemented a topic classification algorithm for twitter trends \cite{classTwitterTrends}. To collect data for their experiments they used the information provided by the "What the trend" website. They downloaded tweets which correspond to over 23'000 trending topics and randomly selected 768 topics to assign them to one of 18 selected topic classes like health, politics, technology or movies. They used supervised learning techniques to classify the trends to a topic class. The provided example (Figure \ref{techClass}) shows the hottest topics in the technology class.
+A few people from the Northwestern University implemented a topic classification algorithm for twitter trends \cite{leeEtAl2011}. To collect data for their experiments they used the information provided by the "What the trend" website. They downloaded tweets which correspond to over 23'000 trending topics and randomly selected 768 topics to assign them to one of 18 selected topic classes like health, politics, technology or movies. They used supervised learning techniques to classify the trends to a topic class. The provided example (Figure \ref{techClass}) shows the hottest topics in the technology class.
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.35]{images/technologyClass.png}
@@ -67,7 +110,7 @@ A few people from the Northwestern University implemented a topic classification
 	\label{techClass}
 \end{figure}
 
-Another paper has the focus on the trend detection \cite{monitorTwitterTrends}. Two guys from the Computer Science department at the University of Toronto developed a monitor (Figure \ref{monitorArchitecture}) for twitter trends in real-time. They split their implementation into a front and back-end part. The TwitterListener separates the tweet information into fields (tweet text, author, timestamp) and exports feeds. Text and timestamp goes to the Bursty Keywords Detection module. This module computes a set of bursty keywords for every tweet and tries to find other tweets in the past which were assigned to the same set (Bursty Keywords Grouping). If the system has found enough tweets it will create a new trend with the corresponding description (Trend Analysis). The Lucene module needs all the fields from the tweet. Apache Lucene is responsible for indexing the tweets. This is important to get feeds from the past, because the Twitter API had some restrictions for requests that date further back in time. The Interface module will present the trends on a webpage.
+Another paper has the focus on the trend detection \cite{Mathioudakis2010}. Two guys from the Computer Science department at the University of Toronto developed a monitor (Figure \ref{monitorArchitecture}) for twitter trends in real-time. They split their implementation into a front and back-end part. The TwitterListener separates the tweet information into fields (tweet text, author, timestamp) and exports feeds. Text and timestamp goes to the Bursty Keywords Detection module. This module computes a set of bursty keywords for every tweet and tries to find other tweets in the past which were assigned to the same set (Bursty Keywords Grouping). If the system has found enough tweets it will create a new trend with the corresponding description (Trend Analysis). The Lucene module needs all the fields from the tweet. Apache Lucene is responsible for indexing the tweets. This is important to get feeds from the past, because the Twitter API had some restrictions for requests that date further back in time. The Interface module will present the trends on a webpage.
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.45]{images/monitorArchitecture.png}
@@ -78,7 +121,7 @@ Another paper has the focus on the trend detection \cite{monitorTwitterTrends}. 
 \subsection{Sentiment Analysis}
 The sentiment analysis of a tweet is also a well-covered topic by the computer science community.\\ 
 
-Members of the University of Edinburgh wrote a paper with the title: "Twitter Sentiment Analysis: The Good, the Bad and the OMG!" \cite{sentimentAnalysisEdin}. They took tweets and did some preprocessing steps first. Replace abbreviations by their actual meaning (e.g. 'BRB' goes to 'be right back') and repeated characters are replaced by single characters (e.g. 'happyyyy' goes to 'happy'). Finally, each word was assigned to a POS-tag (Part-of-Speech). After that, a number of feature values was calculated. The n-gram feature which is a contiguous sequence of n items from a given tweet. The Part-of-Speech feature count the number of verbs, adverbs, adjectives, nouns and any others. The MPQA subjectivity lexicon (similar to SentiWordNet) was used to calculate a positive, negative and neutral value based on the presence of any words from the lexicon. Emoticons and abbreviations - Micro-blogging feature - define a feature too (by the use of the Internet Lingo Dictionary and various internet slang dictionaries). To train an AdaBost model they used over 20'000 tweets. The usage of the Part-of-Speech feature didn't improve the performance of the classifier. The micro-blogging feature was clearly the most useful. With the best combination of the features they get an average accuracy of 0.75 on different test sets (Figure \ref{sentimentAccuracy}).
+Members of the University of Edinburgh wrote a paper with the title: "Twitter Sentiment Analysis: The Good, the Bad and the OMG!" \cite{KouloumpisWM11}. They took tweets and did some preprocessing steps first. Replace abbreviations by their actual meaning (e.g. 'BRB' goes to 'be right back') and repeated characters are replaced by single characters (e.g. 'happyyyy' goes to 'happy'). Finally, each word was assigned to a POS-tag (Part-of-Speech). After that, a number of feature values was calculated. The n-gram feature which is a contiguous sequence of n items from a given tweet. The Part-of-Speech feature count the number of verbs, adverbs, adjectives, nouns and any others. The MPQA subjectivity lexicon (similar to SentiWordNet) was used to calculate a positive, negative and neutral value based on the presence of any words from the lexicon. Emoticons and abbreviations - Micro-blogging feature - define a feature too (by the use of the Internet Lingo Dictionary and various internet slang dictionaries). To train an AdaBost model they used over 20'000 tweets. The usage of the Part-of-Speech feature didn't improve the performance of the classifier. The micro-blogging feature was clearly the most useful. With the best combination of the features they get an average accuracy of 0.75 on different test sets (Figure \ref{sentimentAccuracy}).
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.5]{images/sentimentAccuracy.png}
@@ -145,7 +188,7 @@ Storm topologies can run in two different modes. The local mode is a single Java
 The difference between a traditional BigData approach like Hadoop and storm is the paradigm that it addresses. Hadoop fundamentally a batch processing system. The results are available after the whole data was distributed over the whole system. The construction of topologies that transform unterminated streams of data is supported by storm. A storm topology will never stop running (until termination by user), Hadoop jobs will stop after all available data (at starting time) proceeded by the system.
 
 \subsection{Cassandra}
-Eben Hewitt explained Cassandra with only 50 words \cite{cassandraBook}:\\
+Eben Hewitt explained Cassandra with only 50 words \cite{hewitt2010cassandra}:\\
 
 "Apache Cassandra is an open source, distributed, decentralized, elastically scalable, highly  available, fault-tolerant, tuneably consistent, column-oriented database that bases its distribution design on Amazon's Dynamo and its data model on Google's Bigtable. Created at Facebook, it is now used at some of the most popular sites on the Web."\\
 
@@ -171,7 +214,7 @@ Cassandra is a column-oriented database, it represents it's data structures in s
 The first step to define a Cassandra database is the creation of a keyspace which is a logical namespace to hold column families and some configuration properties.
 
 \subsubsection{High Performance}
-Cassandra was designed to take full advantage of multiprocessor/multicore machines and run on multiple of these machines in data centers. It should be scale to hundreds of terabytes and stay consistent. People from the university of Toronto analysed the performance of Cassandra \cite{perfCassandra}. They defined some different workloads to create some scenarios. One was with 50\% inserts, 25\% reads and 25\% scans. Two independent clusters are used where each has about 16 Linux nodes (Intel Xeon quad core CPU's, 16GB of RAM, 148GB disk space). The nodes are connected with a gigabit Ethernet network over a single switch. The strength of Cassandra is clearly visible (Figure \ref{throughput_cassandra}), because the throughput with only one node is lower than other ones. If the number of nodes was increased, the gap between Cassandra and all the other tested systems is huge.
+Cassandra was designed to take full advantage of multiprocessor/multicore machines and run on multiple of these machines in data centers. It should be scale to hundreds of terabytes and stay consistent. People from the university of Toronto analysed the performance of Cassandra \cite{rabEtAl2012}. They defined some different workloads to create some scenarios. One was with 50\% inserts, 25\% reads and 25\% scans. Two independent clusters are used where each has about 16 Linux nodes (Intel Xeon quad core CPU's, 16GB of RAM, 148GB disk space). The nodes are connected with a gigabit Ethernet network over a single switch. The strength of Cassandra is clearly visible (Figure \ref{throughput_cassandra}), because the throughput with only one node is lower than other ones. If the number of nodes was increased, the gap between Cassandra and all the other tested systems is huge.
 
 \begin{figure}[h!]
 	\centering
@@ -201,7 +244,6 @@ The resulting dictionary can be downloaded on the research website of SentiWordN
 The neutral (objective) score of the word can be calculated by 1 - (Positive score + Negative score).
 
 \subsection{Fuzzy Concept Implementation}
-\includegraphics[scale=0.5]{images/FuzzyModelFactory_Diagram.png}\\
 To delegate the creation of the model with the implemented fuzzy approach to the \textit{FuzzyBolt} class, a Parameterized Factory Method pattern is used. It's possible to create a new fuzzy model approach by extending the \textit{FuzzyModel} class and modify the \textit{FuzzyModelFactory} to make the object creation of the corresponding model accessible. The selection of the new approach can be done by the following statements:
 \lstset{language=Java}
 \begin{lstlisting}
@@ -212,11 +254,54 @@ The second line will call the static \textit{getFuzzyModel} method of the factor
 The \textit{SentiWordFuzzyModel} class has a \textit{createDict} method which creates a hash map out of the text file consists of the word as key and the corresponding vector with the opinions (positive, negative and neutral) as value.
 The \textit{FuzzyBolt} class is the first bolt in the whole Storm process and receives the output of the twitter spout. The execute-method calculates the three sentiment values of the tweet and give them to the Cassandra bolt.
 
+\subsection{Topology}
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=2.5]{images/uml_topology.png}
+	\caption{Class Diagram of the implemented topology}
+	\label{uml_fuzzy}
+\end{figure}
+\subsection{Data Collection}
+\subsection{Classification}
+\subsubsection{Discrete Classification}
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=2.5]{images/uml_discrete.png}
+	\caption{Discrete Classification - Interface and Sample Implementation}
+	\label{uml_fuzzy}
+\end{figure}
+\subsubsection{Fuzzy Classification}
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=2.5]{images/uml_fuzzy.png}
+	\caption{Fuzzy Classification - Interface and Sample Implementation}
+	\label{uml_fuzzy}
+\end{figure}
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5]{images/trapezoid.pdf}
+	\caption{Trapezoid Member ship function (based on \cite{faseld2012}, p. 74)}
+	\label{trapezoid_functions}
+\end{figure}
+\subsection{Persistence}
+\subsection{Build Infrastructure}
+\subsection{Extensibility: API}
+
 \section{Conclusion}
+
+
 
 \newpage
 
+
+
 \section{References}
+\selectlanguage{English}
+\bibliographystyle{plain}
+\bibliography{references}
+
+\newpage
+~%
 \bibliography{diva_group}
 \bibliographystyle{plain}
 
@@ -278,12 +363,17 @@ The \textit{FuzzyBolt} class is the first bolt in the whole Storm process and re
 	Efthymios Kouloumpis, Theresa Wilson, Johanna Moore
 	\newblock{\em Twitter Sentiment Analysis: The Good the bad and the OMG!}
 	\newblock available: \url{http://crowdsourcing-class.org/assignments/downloads/kouloumpis-et-al.pdf}, accessed 3nd December 2013.
+	
+	\bibitem{faseld2012}
+	Daniel Fasel
+	\newblock{\em Concept and Implementation of a Fuzzy Data Warehouse}
+	\newblock Doctoral Thesis, Switzerland, May 2012.
 
 	\newblock{}
 	\newblock{}
 	
 \end{thebibliography}
-
+%~
 
 
 

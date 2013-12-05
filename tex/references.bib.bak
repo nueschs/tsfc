@@ -1,0 +1,165 @@
+% This file was created with JabRef 2.10b2.
+% Encoding: UTF-8
+
+
+@InProceedings{KouloumpisWM11,
+  Title                    = {Twitter Sentiment Analysis: The Good the Bad and the OMG!},
+  Author                   = {Kouloumpis, Efthymios and Wilson, Theresa and Moore, Johanna},
+  Booktitle                = {ICWSM},
+  Year                     = {2011},
+  Editor                   = {Adamic, Lada A. and Baeza-Yates, Ricardo A. and Counts, Scott},
+  Publisher                = {The AAAI Press},
+
+  Added-at                 = {2012-01-04T00:00:00.000+0100},
+  Biburl                   = {http://www.bibsonomy.org/bibtex/2d150e88dcf97a74c626341a1e07f37d7/dblp},
+  Crossref                 = {conf/icwsm/2011},
+  Ee                       = {http://www.aaai.org/ocs/index.php/ICWSM/ICWSM11/paper/view/2857},
+  Interhash                = {87d279e675c8c9743673801fb87a2af0},
+  Intrahash                = {d150e88dcf97a74c626341a1e07f37d7},
+  Keywords                 = {dblp},
+  Timestamp                = {2012-01-04T00:00:00.000+0100},
+  Url                      = {http://dblp.uni-trier.de/db/conf/icwsm/icwsm2011.html#KouloumpisWM11}
+}
+
+@InProceedings{Baccianella2010,
+  Title                    = {SentiWordNet 3.0: An Enhanced Lexical Resource for Sentiment Analysis and Opinion Mining},
+  Author                   = {Stefano Baccianella and Andrea Esuli and Fabrizio Sebastiani},
+  Booktitle                = {in Proc. of LREC},
+  Year                     = {2010}
+}
+
+@InProceedings{Esuli2006,
+  Title                    = {SENTIWORDNET: A Publicly Available Lexical Resource for Opinion Mining},
+  Author                   = {Andrea Esuli and Fabrizio Sebastiani},
+  Booktitle                = {In Proceedings of the 5th Conference on Language Resources and Evaluation (LREC’06},
+  Year                     = {2006},
+  Pages                    = {417--422}
+}
+
+@PhdThesis{faseld2012,
+  Title                    = {Concept and Implementation of a Fuzzy Data Warehouse},
+  Author                   = {Daniel Fasel},
+  School                   = {University of Fribourg},
+  Year                     = {2012},
+
+  Owner                    = {snoooze},
+  Timestamp                = {2013.12.05}
+}
+
+@Article{go2009twitter,
+  Title                    = {Twitter sentiment analysis},
+  Author                   = {Go, Alec and Huang, Lei and Bhayani, Richa},
+  Journal                  = {Entropy},
+  Year                     = {2009},
+  Volume                   = {17}
+}
+
+@Book{hewitt2010cassandra,
+  Title                    = {Cassandra: The Definitive Guide},
+  Author                   = {Hewitt, E.},
+  Publisher                = {O'Reilly Media},
+  Year                     = {2010},
+
+  ISBN                     = {9781449396640},
+  Url                      = {http://books.google.ch/books?id=MKGSbCbEdg0C}
+}
+
+@Article{jones2013,
+  Title                    = {Process real-time big data with Twitter Storm},
+  Author                   = {M. Tim Jones},
+  Year                     = {2013},
+
+  Owner                    = {snoooze},
+  Timestamp                = {2013.12.05}
+}
+
+@InProceedings{leeEtAl2011,
+  Title                    = {Twitter Trending Topic Classification},
+  Author                   = {Lee, Kathy and Palsetia, Diana and Narayanan, Ramanathan and Patwary, Md. Mostofa Ali and Agrawal, Ankit and Choudhary, Alok},
+  Booktitle                = {Proceedings of the 2011 IEEE 11th International Conference on Data Mining Workshops},
+  Year                     = {2011},
+
+  Address                  = {Washington, DC, USA},
+  Note                     = {accessed December 3rd, 2013},
+  Pages                    = {251--258},
+  Publisher                = {IEEE Computer Society},
+  Series                   = {ICDMW '11},
+
+  Acmid                    = {2119627},
+  Doi                      = {10.1109/ICDMW.2011.171},
+  ISBN                     = {978-0-7695-4409-0},
+  Keywords                 = {Social Networks, Twitter, Topic Classification},
+  Numpages                 = {8},
+  Url                      = {http://dx.doi.org/10.1109/ICDMW.2011.171}
+}
+
+@Book{leibiusky2012,
+  Title                    = {Getting Started with Storm - Continuous Streaming Computation with Twitter's Cluster Technology.},
+  Author                   = {Leibiusky, Jonathan and Eisbruch, Gabriel and Simonassi, Dario},
+  Publisher                = {O'Reilly},
+  Year                     = {2012},
+
+  Added-at                 = {2012-12-10T00:00:00.000+0100},
+  Biburl                   = {http://www.bibsonomy.org/bibtex/274e761ce615ead55664af904ae01332c/dblp},
+  Ee                       = {http://www.oreilly.de/catalog/9781449324018/index.html},
+  Interhash                = {1017c5278ea766e5d5f926898f069432},
+  Intrahash                = {74e761ce615ead55664af904ae01332c},
+  ISBN                     = {978-1-449-32401-8},
+  Keywords                 = {dblp},
+  Pages                    = {I-IX, 1-92},
+  Timestamp                = {2012-12-10T00:00:00.000+0100}
+}
+
+@InProceedings{Mathioudakis2010,
+  Title                    = {TwitterMonitor: Trend Detection over the Twitter Stream},
+  Author                   = {Mathioudakis, Michael and Koudas, Nick},
+  Booktitle                = {Proceedings of the 2010 ACM SIGMOD International Conference on Management of Data},
+  Year                     = {2010},
+
+  Address                  = {New York, NY, USA},
+  Note                     = {accessed December 3rd, 2013},
+  Pages                    = {1155--1158},
+  Publisher                = {ACM},
+  Series                   = {SIGMOD '10},
+
+  Acmid                    = {1807306},
+  Doi                      = {10.1145/1807167.1807306},
+  ISBN                     = {978-1-4503-0032-2},
+  Keywords                 = {social media analysis, trend detection},
+  Location                 = {Indianapolis, Indiana, USA},
+  Numpages                 = {4},
+  Url                      = {http://doi.acm.org/10.1145/1807167.1807306}
+}
+
+@Article{rabEtAl2012,
+  Title                    = {Solving Big Data Challenges for Enterprise Application Performance Management},
+  Author                   = {Rabl, Tilmann and G\'{o}mez-Villamor, Sergio and Sadoghi, Mohammad and Munt{\'e}s-Mulero, Victor and Jacobsen, Hans-Arno and Mankovskii, Serge},
+  Journal                  = {Proc. VLDB Endow.},
+  Year                     = {2012},
+
+  Month                    = aug,
+  Note                     = {accessed December 2nd, 2013},
+  Number                   = {12},
+  Pages                    = {1724--1735},
+  Volume                   = {5},
+
+  Acmid                    = {2367512},
+  ISSN                     = {2150-8097},
+  Issue_date               = {August 2012},
+  Numpages                 = {12},
+  Publisher                = {VLDB Endowment},
+  Url                      = {http://dl.acm.org/citation.cfm?id=2367502.2367512}
+}
+
+@Electronic{shalom2013,
+  Title                    = {Real-Time Big Data with Storm, Cassandra, and XAP},
+  Author                   = {Nati Shalom},
+  HowPublished             = {Blogpost},
+  Month                    = {April},
+  Url                      = {http://natishalom.typepad.com/nati_shaloms_blog/2013/04/real-time-big-data-with-storm-cassandra-and-xap-1.html},
+  Year                     = {2013},
+
+  Owner                    = {snoooze},
+  Timestamp                = {2013.12.05}
+}
+
