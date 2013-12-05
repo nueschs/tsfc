@@ -2,25 +2,6 @@
 % Encoding: UTF-8
 
 
-@InProceedings{KouloumpisWM11,
-  Title                    = {Twitter Sentiment Analysis: The Good the Bad and the OMG!},
-  Author                   = {Kouloumpis, Efthymios and Wilson, Theresa and Moore, Johanna},
-  Booktitle                = {ICWSM},
-  Year                     = {2011},
-  Editor                   = {Adamic, Lada A. and Baeza-Yates, Ricardo A. and Counts, Scott},
-  Publisher                = {The AAAI Press},
-
-  Added-at                 = {2012-01-04T00:00:00.000+0100},
-  Biburl                   = {http://www.bibsonomy.org/bibtex/2d150e88dcf97a74c626341a1e07f37d7/dblp},
-  Crossref                 = {conf/icwsm/2011},
-  Ee                       = {http://www.aaai.org/ocs/index.php/ICWSM/ICWSM11/paper/view/2857},
-  Interhash                = {87d279e675c8c9743673801fb87a2af0},
-  Intrahash                = {d150e88dcf97a74c626341a1e07f37d7},
-  Keywords                 = {dblp},
-  Timestamp                = {2012-01-04T00:00:00.000+0100},
-  Url                      = {http://dblp.uni-trier.de/db/conf/icwsm/icwsm2011.html#KouloumpisWM11}
-}
-
 @InProceedings{Baccianella2010,
   Title                    = {SentiWordNet 3.0: An Enhanced Lexical Resource for Sentiment Analysis and Opinion Mining},
   Author                   = {Stefano Baccianella and Andrea Esuli and Fabrizio Sebastiani},
@@ -71,6 +52,24 @@
 
   Owner                    = {snoooze},
   Timestamp                = {2013.12.05}
+}
+
+@InProceedings{KouloumpisWM11,
+  Title                    = {Twitter Sentiment Analysis: The Good the Bad and the OMG!},
+  Author                   = {Kouloumpis, Efthymios and Wilson, Theresa and Moore, Johanna},
+  Booktitle                = {ICWSM},
+  Year                     = {2011},
+  Editor                   = {Adamic, Lada A. and Baeza-Yates, Ricardo A. and Counts, Scott},
+  Publisher                = {The AAAI Press},
+
+  Added-at                 = {2012-01-04T00:00:00.000+0100},
+  Biburl                   = {http://www.bibsonomy.org/bibtex/2d150e88dcf97a74c626341a1e07f37d7/dblp},
+  Ee                       = {http://www.aaai.org/ocs/index.php/ICWSM/ICWSM11/paper/view/2857},
+  Interhash                = {87d279e675c8c9743673801fb87a2af0},
+  Intrahash                = {d150e88dcf97a74c626341a1e07f37d7},
+  Keywords                 = {dblp},
+  Timestamp                = {2012-01-04T00:00:00.000+0100},
+  Url                      = {http://dblp.uni-trier.de/db/conf/icwsm/icwsm2011.html#KouloumpisWM11}
 }
 
 @InProceedings{leeEtAl2011,
