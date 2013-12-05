@@ -192,13 +192,16 @@ Eben Hewitt explained Cassandra with only 50 words \cite{hewitt2010cassandra}:\\
 
 "Apache Cassandra is an open source, distributed, decentralized, elastically scalable, highly  available, fault-tolerant, tuneably consistent, column-oriented database that bases its distribution design on Amazon's Dynamo and its data model on Google's Bigtable. Created at Facebook, it is now used at some of the most popular sites on the Web."\\
 
-The data store is an open source Apache project available at http://cassandra.apache.org. Cassandra originated at Facebook in 2007. It should solve the company's inbox search problem, because they had to deal with large volumes of data. The project was moved to Apache in March 2009. Cassandra has some interesting properties:
+The data store is an open source Apache project available at http://cassandra.apache.org. Cassandra originated at Facebook in 2007. It should solve the company's inbox search problem, because they had to deal with large volumes of data. The project was moved to Apache in March 2009.
 
-\subsubsection{Elastic Scalability }
+\subsubsection{Properties}
+Cassandra has some interesting properties:
+
+\paragraph{Elastic Scalability }
 There are two different types of scaling. Add more hardware capacity and memory to the existing way is one way to handle a greater number of requests. This approach is called vertical scaling. Horizontal scaling will add more machines to distributed the incoming data over multiple nodes. This will decrease the amount of data for every machine. Elastic scalability is a specialization of the horizontal scaling where the cluster can scale up and scale back down, depending on the current load. Cassandra is able to handle new machines on-the-fly, no restart of the process or manually rebalancing of the data is required. 
-\subsubsection{High Availability and Fault Tolerance}
+\paragraph{High Availability and Fault Tolerance}
 Machines in the cluster will have technical issues from time to time. Cassandra is able to handle replaced failed nodes without downtime. Also replication of data to multiple data center is possible to prevent downtime if a data center experiences a catastrophe like a fire. 
-\subsubsection{Tuneable Consistency}
+\paragraph{Tuneable Consistency}
 Consistency means that a read operation returns the last written value from the database. But a database system cannot implement all three components of the CAP theorem and the focus of Cassandra are Availability and Partition tolerance (AP). Therefore, the consistency is not guaranteed. But it allows to configure the degree of the consistency in balance with the level of availability: 
 \begin{itemize}
 	\item \textbf{Strict consistency} Also called sequential consistency. It's the highest level of consistency and it requires that a read will always return the recently written value in the database. If you have only a single machine with one processor (and one processor clock) the last written value is easy to find. But if there are geographically dispersed data centers, it becomes much more slippery. A global clock which can timestamp all operations, regardless of the data location or how many services are needed to determine the response, is required 
@@ -207,13 +210,13 @@ Consistency means that a read operation returns the last written value from the 
 \end{itemize}
 The user of Cassandra can control the number of replicas to block on for all updates (Tunable consistency). This can be done by setting the level of consistency against the replication factor. With the replication factor the client can define the level of consistency, but a higher level implies a lower performance of the system. The factor controls the number of nodes in the cluster where you want to distribute the updates (add, update and delete). The number of replicas which have to acknowledge a write operation or respond to a read operation to declare this operation as successful is defined by the consistency level.
 
-\subsubsection{Raw-Oriented}
+\paragraph{Raw-Oriented}
 Cassandra is a column-oriented database, it represents it's data structures in sparse multidimensional hashtables. For every given row you can have many columns, but they doesn't have to be the all the same like in the relational model. A unique key makes the data accessible. One advantage of Cassandra is that you don't have to define what the data structure must look like or what fields you will need. This implies also that you can add or remove new fields on the fly without disturbing the system. This is ideal if you use an agile development methodology and you don't have time to define the entire database schema at the beginning of the project.
 
-\subsubsection{Schema-Free}
-The first step to define a Cassandra database is the creation of a keyspace which is a logical namespace to hold column families and some configuration properties.
+\paragraph{Schema-Free}
+The first step to define a Cassandra database is the creation of a keyspace which is a logical namespace to hold column families and some configuration properties (e.g. replication factor). The column families are names for associated data and a sort order. Because the tables are sparse, the data can just be added using arbitrary columns. There is no need for modeling data up front using data modeling tools and then creating queries with complex join statements. With Cassandra, the user can first create the queries and the system will provide the data around them.
 
-\subsubsection{High Performance}
+\paragraph{High Performance}
 Cassandra was designed to take full advantage of multiprocessor/multicore machines and run on multiple of these machines in data centers. It should be scale to hundreds of terabytes and stay consistent. People from the university of Toronto analysed the performance of Cassandra \cite{rabEtAl2012}. They defined some different workloads to create some scenarios. One was with 50\% inserts, 25\% reads and 25\% scans. Two independent clusters are used where each has about 16 Linux nodes (Intel Xeon quad core CPU's, 16GB of RAM, 148GB disk space). The nodes are connected with a gigabit Ethernet network over a single switch. The strength of Cassandra is clearly visible (Figure \ref{throughput_cassandra}), because the throughput with only one node is lower than other ones. If the number of nodes was increased, the gap between Cassandra and all the other tested systems is huge.
 
 \begin{figure}[h!]
@@ -226,6 +229,17 @@ Cassandra was designed to take full advantage of multiprocessor/multicore machin
 The authors of the paper concluded their paper with the following words:\\
 
 "In terms of scalability, there is a clear winner throughout our experiments. Cassandra achieves the highest throughput for the maximum number of nodes in all experiments with a linear increasing throughput from 1 to 12 nodes."
+
+\subsubsection{Data model}
+Cassandra using the data model from the BigTable \cite{paperBigTable} approach from Google. To illustrate the components of this model we take a look at an example application. Assume the user want to store a large collection of webpages and some further information. BigTable is a persistent, multidimensional sorted map and the map is indexed by a row key, column key and a timestamp. For the webpage collection the URLs are the row keys, various aspects of the webpages are column names. Assume the CNN site want the be stored (Figure \ref{model_bigtable}).
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.4]{images/modelBigTable.png}
+	\caption{Illustration of the BigTable data model}
+	\label{model_bigtable}
+\end{figure}
+The row name is the reversed URL. The map is sorted by the row key and we want to group the domains together with their corresponding subdomains (e.g. com.cnn.sport). The whole content of the page (source code) is kept in the contents column family. There are three different versions at timestamp t$_{3}$, t$_{5}$ and t$_{6}$ because the content of the page changes over time. Each cell can contain multiple versions of the data, indexed by 64-bit integers timestamps. The anchor column family contains the name of the anchors that reference the CNN page. The Sports Illustrated (column name is \textit{anchor:cnnsi.com}) and the MY-look (\textit{anchor:my.look.ca}) pages have a link to CNN. The column name contains information too, that is not possible with a relational database model. Every column key is named using the syntax: \textit{family:qualifier}. A column family has to be created before data can be stored under any column key in that family.
+
 
 \section{Implementation}
 \subsection{Architecture}
@@ -368,6 +382,11 @@ The \textit{FuzzyBolt} class is the first bolt in the whole Storm process and re
 	Daniel Fasel
 	\newblock{\em Concept and Implementation of a Fuzzy Data Warehouse}
 	\newblock Doctoral Thesis, Switzerland, May 2012.
+
+	\bibitem{paperBigTable}
+	Fay Chang, Jeffrey Dean, Sanjay Ghemawat, Wilson Hsieh, Deborah Wallach, Mike Burrows, Tushar Chandra, Andrew Fikes, Rober Gruber
+	\newblock{\em Bigtable: A Distributed Storage System for Structured Data}
+	\newblock available: \url{http://research.google.com/archive/bigtable-osdi06.pdf}, accessed 5nd December 2013.
 
 	\newblock{}
 	\newblock{}

@@ -26,3 +26,4 @@ target/
 *.blg
 *.lts
 *.toc
+*report.pdf
