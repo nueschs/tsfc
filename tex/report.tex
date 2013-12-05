@@ -17,7 +17,7 @@
 
 
 \lstset{language=Java,
-basicstyle=\ttfamily,
+basicstyle=\ttfamily\footnotesize,
 keywordstyle=\color{javapurple}\bfseries,
 stringstyle=\color{javared},
 commentstyle=\color{javagreen},
@@ -28,7 +28,8 @@ stepnumber=2,
 numbersep=10pt,
 tabsize=4,
 showspaces=false,
-showstringspaces=false}
+showstringspaces=false,
+captionpos=b}
 
 \begingroup
     \catcode `\@ = 11
@@ -129,7 +130,7 @@ Members of the University of Edinburgh wrote a paper with the title: "Twitter Se
 	\label{sentimentAccuracy}
 \end{figure}
 
-\subsection{SentiWordNet}
+\subsection{SentiWordNet}\label{sentiWordNet}
 
 \section{Technologies}
 
@@ -268,12 +269,12 @@ The second line will call the static \textit{getFuzzyModel} method of the factor
 The \textit{SentiWordFuzzyModel} class has a \textit{createDict} method which creates a hash map out of the text file consists of the word as key and the corresponding vector with the opinions (positive, negative and neutral) as value.
 The \textit{FuzzyBolt} class is the first bolt in the whole Storm process and receives the output of the twitter spout. The execute-method calculates the three sentiment values of the tweet and give them to the Cassandra bolt.
 
-\subsection{Topology}
+\subsection{Topology}\label{section_topology}
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=2.5]{images/uml_topology.png}
 	\caption{Class Diagram of the implemented topology}
-	\label{uml_fuzzy}
+	\label{uml_topology}
 \end{figure}
 \subsection{Data Collection}
 To access Twitter data, a Storm Spout (cf. \ref{storm_components}) was created.
@@ -293,7 +294,43 @@ In order to achieve numerical classification of tweets, an implementation needs 
 \item \texttt{getMinValue()}: This method returns the minimum value of the classification range.
 \item \texttt{getMaxValue()}: This method returns the maximum value of the classification range.
 \item \texttt{getClassifications()}: The actual calculation of the numerical values. As input, the method receives the tweet in form of a \texttt{Tuple}, which is a wrapper class used by Storm. Currently, the interface is designed as to support word-by-word classification of the tweets, therefore it returns a map which relates the word (map key) to the calculated numerical value (map value).
-\end{itemize}\\
+\end{itemize}
+
+\subsubsection{Sample Implementation}
+To be able the questions stated in \ref{research_questions}, sample implementations for both discrete and fuzzy classification need to be provided by the prototype. The authors chose to use SentiWordNet, explained in chapter~\ref{sentiWordNet}, to discretely classify the tweets. More specifically, the class \texttt{SentiWordNetClassification} may be initialized to either rate the negative or the positive sentiments expressed in a tweet. As a word in the SentiWordNet database may have both a positive and a negative rating, and as these ratings are not necessarily correlated, the positive positive and the negative ratings are treated as different classifications. To calculate both positive and negative sentiments for tweets, two separate bolts (cf. chapter~\ref{section_topology}) could be added to the prototype topology.\\
+
+\lstset{language=Java,caption={SentiWordNet Dictionary Creation},label=sentiwordnet_dict}
+\begin{lstlisting}
+Map<String, Double> dict = new HashMap<>();
+InputStream is = this.getClass().getClassLoader().getResourceAsStream(SWN_PATH);
+BufferedReader csv =  new BufferedReader(new InputStreamReader(is));
+String line = "";
+while((line = csv.readLine()) != null){
+	// The file is tab separated
+	String[] data = line.split("\t");
+	// Get entry word
+	String[] words = data[WORD_POSITION].split(" ");
+	// There can be multiple words
+	for(String w : words)
+	{
+		// Remove the '#'-sign from the words
+		String[] w_n = w.split("#");
+		if(!dict.containsKey(w_n[0])){
+			// implementing class has to supply correct position
+			dict.put(w_n[0], Double.parseDouble(data[position]));
+		}
+	}
+}
+csv.close();
+return dict;
+\end{lstlisting}
+
+Listing~\ref{sentiwordnet_dict} shows the java code for creating the SentiWordNet dictionary. As visible from the code between line 6 to line 15, each word is added to the dictionary only once. Furthermore, all special characters are removed, and any context information is ignored. This approach does not consider several features of the original SentiWordNet dictionary, such as the word class (adjective, nouns, adverbs, etc.) and combinations of words (e.g. certain idioms), among others. While such information may be beneficiary for the precision of the word ratings, the described approach allows for a simple calculation of roughly adequate ratings. \\
+The dictionary created by the code shown in listing~\ref{sentiwordnet_dict} is the central part of word-by-word classification. The tweets supplied to the \texttt{getClassifications()} method will be split into words. Thereafter, the positive or negative value for each word is looked up in the dictionary, if any exists.
+
+
+
+
 \subsubsection{Fuzzy Classification}
 \begin{figure}[h!]
 	\centering
