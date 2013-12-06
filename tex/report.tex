@@ -423,6 +423,7 @@ Adding new membership functions, such as a Gaussian function, may enhance the va
 \subsection{Future Work}
 While the presented prototype provides a solution for the fuzzy analysis of tweets, the chapter~\ref{implementation} shows that the approach is only basic, and clearly leaves room for improvement. Further work may explore different fields of information to be analysed, improve
 \subsubsection{SentiWordNet}
+The implemented word-by-word approach is only the beginning of an accurate classifier. There are some main issues to work on in the next development steps. An improvement of the SentiWordNet can be to implement a \textit{language processing} step which is able to assign every word a part-of-speech tag. Then it is easier to find out which entry in the dictionary is the best match. To take other important information of the tweet into account, other \textit{features} can be used to describe the sentiment of it. For example emoticons or emphasized words. A \textit{combination} of different features to train a classifier could produce better results in the future.
 \subsubsection{Implementation}
 \subsubsection{Deployment}
 
