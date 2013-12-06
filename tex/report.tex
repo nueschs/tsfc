@@ -119,7 +119,7 @@ Another paper has the focus on the trend detection \cite{Mathioudakis2010}. Two 
 	\label{monitorArchitecture}
 \end{figure}
 
-\subsection{Sentiment Analysis}
+\subsection{Sentiment Analysis}\label{section_sentiment}
 The sentiment analysis of a tweet is also a well-covered topic by the computer science community.\\ 
 
 Members of the University of Edinburgh wrote a paper with the title: "Twitter Sentiment Analysis: The Good, the Bad and the OMG!" \cite{KouloumpisWM11}. They took tweets and did some preprocessing steps first. Replace abbreviations by their actual meaning (e.g. 'BRB' goes to 'be right back') and repeated characters are replaced by single characters (e.g. 'happyyyy' goes to 'happy'). Finally, each word was assigned to a POS-tag (Part-of-Speech). After that, a number of feature values was calculated. The \textit{n}-gram feature which is a contiguous sequence of \textit{n} items from a given tweet. The Part-of-Speech feature count the number of verbs, adverbs, adjectives, nouns and any others. The MPQA subjectivity lexicon\footnote{http://mpqa.cs.pitt.edu/lexicons/subj\_lexicon/} (similar to SentiWordNet) was used to calculate a positive, negative and neutral value based on the presence of any words from the lexicon. Emoticons and abbreviations - Micro-blogging feature - define a feature too (by the use of the Internet Lingo Dictionary and various internet slang dictionaries). To train an AdaBost model they used over 20'000 tweets. The usage of the Part-of-Speech feature didn't improve the performance of the classifier. The micro-blogging feature was clearly the most useful. With the best combination of the features they get an average accuracy of 0.75 on different test sets (Figure \ref{sentimentAccuracy}).
@@ -430,7 +430,7 @@ On a technical level, several issues arose during the development of the prototy
 During the development of the prototype, it was run and tested in a local setup only. However, both Storm and Cassandra are designed to run in a distributed architecture as for example a cluster. To harness the possibilities which these technologies provide, the prototype could be run on such a cluster or a cloud setup like Amazon's EC2 cloud in future.\\
 
 \section{Conclusion}
-The presented work shows how fuzzy logic can be applied to social data accessed from Twitter. More so, the implementation described in chapter~\ref{implementation} demonstrates that this is possible in a simple, strait-forward matter. Due to the limited time frame in which this work was conducted, clearly there are many open issues and unexplored possibilities remaining (cf. chapter~\ref{future_work}). However, the report at hand undoubtedly shows the convenience of the applied solution as well as its potential.
+The presented work shows how fuzzy logic can be applied to social data accessed from Twitter. More so, the implementation described in chapter~\ref{implementation} demonstrates that this is possible in a simple, strait-forward matter. Due to the limited time frame in which this work was conducted, clearly there are many open issues remaining (cf. chapter~\ref{future_work}). However, the report at hand undoubtedly shows the convenience of the applied solution as well as its potential regarding research fields such as opinion mining (cf. chapter~\ref{section_sentiment}) and trend analysis (chapter~\ref{twitter_trends}).
 
 
 
