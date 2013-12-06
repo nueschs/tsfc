@@ -243,7 +243,9 @@ The row name is the reversed URL. The map is sorted by the row key and we want t
 
 
 \section{Implementation}
-\subsection{Architecture}
+The following chapter describes the prototype developed by the authors to answer the question raised in chatper~\ref{research_questions}. Firstly, several central parts of the prototype are described in detail. Thereafter, the chapter\ref{section_topology} shows how these parts are connected within the application. Finally, the chapter~\ref{section_api} describes how the prototype can be extended with new functionality.
+
+
 \subsection{SentiWordNet Analysis}
 SentiNetWord\footnote{http://sentiwordnet.isti.cnr.it/} is an English dictionary for opinion mining (OM, also known as sentiment classification). The goal was to decide for every word of the WordNet\footnote{http://wordnet.princeton.edu/} if it has a positive, negative or neutral meaning. WordNet is a large lexical database of nouns, verbs, adjectives and adverbs provided by the Princeton University. The developers calculated for every word three values between 0.0 and 1.0 and they had to sum up to one. They labelled different entries of the dictionary manually to define a ground truth for the training set. Then a set of classifiers was trained with the provided data. After these steps the classifiers were able to calculate the corresponding values of the remaining words which weren't in the training data samples. Since the first version of SentiWordNet in 2006 a lot of improvements are done, the actual version is 3.0.0. It's freely available for research approaches.\\
 The dictionary consists of 117'659 entries (69.8\% nouns, 15.4\% adjectives, 11.7\% verbs and 3.1\% adverbs). If we take a closer look at the calculated values (in SentiNetWord 1.0.0) we can see that most of the words are objective (about eighty percent are greater than 0.75). Only a few words are positive (0.48\% \textgreater \ 0.75; about 560 words) or negative (1.28\% \textgreater \ 0.75; about 1500 words).\\
@@ -269,15 +271,9 @@ The second line will call the static \textit{getFuzzyModel} method of the factor
 The \textit{SentiWordFuzzyModel} class has a \textit{createDict} method which creates a hash map out of the text file consists of the word as key and the corresponding vector with the opinions (positive, negative and neutral) as value.
 The \textit{FuzzyBolt} class is the first bolt in the whole Storm process and receives the output of the twitter spout. The execute-method calculates the three sentiment values of the tweet and give them to the Cassandra bolt.
 
-\subsection{Topology}\label{section_topology}
-\begin{figure}[h!]
-	\centering
-	\includegraphics[scale=2.5]{images/uml_topology.png}
-	\caption{Class Diagram of the implemented topology}
-	\label{uml_topology}
-\end{figure}
 \subsection{Data Collection}
-To access Twitter data, a Storm Spout (cf. \ref{storm_components}) was created.
+To access Twitter data, a simple Storm Spout (cf. \ref{storm_components}) is used. At the initialization of this component, an \textit{oAuth} connection to Twitter is created. The oAuth authentication framework will not be discussed in this report, however, further details can be found at \url{http://oauth.net}. After initialization, the spout simply processes each tuple by assigning it a unique identifier (\texttt{UUID}) and forwarding it into the prototype topology (cf. chapter~\ref{section_topology}).
+
 \subsection{Classification}
 As stated in chapter \ref{research_questions}, the goal of the implementation is to enable fuzzy classification of tweets. To achieve fuzzy classification, two steps are necessary. First, there has to be a mapping of numerical values to the tweets. This step will e referred to as discrete classification in the following. Second, a fuzzy membership function must be applied to this discrete classification. This step is called fuzzy classification. This chapter details the implementation of these steps in the presented prototype.\\
 
@@ -359,10 +355,41 @@ The interfaces provides a caller with the following methods, as shown in figure~
 	\label{trapezoid_functions}
 \end{figure}
 
-For the sample implementation of a fuzzy classification, a trapezoid membership function was chosen. Examples of trapezoid function are depicted in figure~\ref{trapezoid_functions}, as adapted from \cite{faseld2012}, p. 74. There are four distinct boundaries which define such a function, namely the \textit{lower limit} (labelled with A), the \textit{lower support limit} (B), the \textit{upper support limit} (C) and the \textit{upper limit} (D). Furthermore, the implementation considers three types of trapezoid functions. Label 1 shows a \textit{left open} function, meaning that all values below the upper limit in the domain of attribute (TODO) will be classified with a membership degree of 1. Label 2 shows a \textit{closed} function, and label 3 a \textit{right open} function.\\
+For the sample implementation of a fuzzy classification, a trapezoid membership function was chosen. Examples of trapezoid function are depicted in figure~\ref{trapezoid_functions}, as adapted from \cite{faseld2012}, p. 74. There are four distinct boundaries which define such a function, namely the \textit{lower limit} (labelled with A), the \textit{lower support limit} (B), the \textit{upper support limit} (C) and the \textit{upper limit} (D). Furthermore, the implementation considers three types of trapezoid functions. Label 1 shows a \textit{left open} function, meaning that all discrete values below the upper support limit will be classified with a membership degree of 1. Label 2 shows a \textit{closed} function, and label 3 a \textit{right open} function.\\
+To reflect these properties, the concrete implementation of the \texttt{FuzzyClassification} interface in the prototype is initialized with five parameters. The first parameter is used to define the linguistic term, while the four subsequent parameters define the lower limit, the lower support limit, the upper support limit and the upper limit respectively. To define left open function, the class is initialized with lower limit and lower support limit set to \texttt{null}, and vice versa for right open functions.\\
+
+The calculation of the actual fuzzy value for a discrete value is done as shown in listing~\ref{fuzzy_calc}. The method \texttt{isOne()} will return true if a value is between the lower and the upper support limit. \texttt{isRising()} will return true if the value is between the lower limit and the lower support limit, and vice versa for \texttt{isFalling()}. This distinction is necessary to calculate the correct membership degree of the discrete value, which is done by normalizing the difference between the lower support limit and the lower limit (in case of \texttt{isRising() == true}) or between the upper support limit and the upper limit (in case of \texttt{isFalling() == true}), as shown in listing~\ref{get_difference}
+\lstset{language=Java,caption={Calculation of Fuzzy Values},label=fuzzy_calc}
+\begin{lstlisting}
+if (this.isOne(value)) {
+	return 1.0;
+} else if (this.isRising(value)) {
+	return this.getDifference(this.lowerLimit, this.lowerSupportLimit, value, false);
+} else if (this.isFalling(value)) {
+	return this.getDifference(this.upperSupportLimit, this.upperLimit, value, true);
+} else {
+	return 0.0;
+}
+\end{lstlisting}
+\lstset{language=Java,caption={Membership degree calculation},label=get_difference}
+\begin{lstlisting}
+double diff = highValue.doubleValue() - lowValue.doubleValue();
+double relValue = value.doubleValue() - lowValue.doubleValue();
+return isFalling ? 1.0 - (relValue / diff) : relValue / diff;
+ 
+\end{lstlisting}
+
+Finally, for the usage with Storm as described in chapter~\ref{TODO_storm}, the \texttt{getFields()} method will return the names of the fields defining the four limit parameters. These values are later retrieved to persist together with the fuzzily classified values.
 
 \subsection{Persistence}
-\subsection{Build Infrastructure}
+\subsection{Topology}\label{section_topology}
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=2.5]{images/uml_topology.png}
+	\caption{Class Diagram of the implemented topology}
+	\label{uml_topology}
+\end{figure}
+
 \subsection{Extensibility: API}\label{section_api}
 
 \section{Conclusion}
