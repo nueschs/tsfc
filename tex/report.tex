@@ -108,7 +108,7 @@ A few people from the Northwestern University implemented a topic classification
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.35]{images/technologyClass.png}
-	\caption{Technology class topics}
+	\caption{Technology class topics \cite{leeEtAl2011}}
 	\label{techClass}
 \end{figure}
 
@@ -116,7 +116,7 @@ Another paper has the focus on the trend detection (\cite{Mathioudakis2010}). Tw
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.45]{images/monitorArchitecture.png}
-	\caption{Architecture of the Twitter Monitor}
+	\caption{Architecture of the Twitter Monitor \cite{Mathioudakis2010}}
 	\label{monitorArchitecture}
 \end{figure}
 
@@ -127,11 +127,23 @@ Members of the University of Edinburgh wrote a paper with the title: "Twitter Se
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.5]{images/sentimentAccuracy.png}
-	\caption{Average accuracy with different features}
+	\caption{Average accuracy with different features \cite{KouloumpisWM11}}
 	\label{sentimentAccuracy}
 \end{figure}
 
 \subsection{SentiWordNet}\label{sentiWordNet}
+SentiNetWord\footnote{http://sentiwordnet.isti.cnr.it/} is an English dictionary for opinion mining (OM, also known as sentiment classification). The goal was to decide for every word of the WordNet\footnote{http://wordnet.princeton.edu/} if it has a positive, negative or neutral meaning. WordNet is a large lexical database of nouns, verbs, adjectives and adverbs provided by the Princeton University. The developers calculated for every word three values between 0.0 and 1.0 and they had to sum up to one. They labelled different entries of the dictionary manually to define a ground truth for the training set. Then a set of classifiers was trained with the provided data. After these steps the classifiers were able to calculate the corresponding values of the remaining words which weren't in the training data samples. Since the first version of SentiWordNet in 2006 a lot of improvements are done, the actual version is 3.0.0. It's freely available for research approaches.\\
+The dictionary consists of 117'659 entries (69.8\% nouns, 15.4\% adjectives, 11.7\% verbs and 3.1\% adverbs). If we take a closer look at the calculated values (in SentiNetWord 1.0.0) we can see that most of the words are objective (about eighty percent are greater than 0.75). Only a few words are positive (0.48\% \textgreater \ 0.75; about 560 words) or negative (1.28\% \textgreater \ 0.75; about 1500 words).\\
+The resulting dictionary can be downloaded on the research website of SentiWordNet and has the following columns (tab separated):
+\begin{enumerate}
+	\item Part of speech (noun, verb, adjective, adverb)
+  \item ID
+	\item Positive score
+	\item Negative score
+	\item The words (plural because of synonyms)
+	\item Glossary (the word in a given context)
+\end{enumerate}
+The neutral (objective) score of the word can be calculated by 1 - (Positive score + Negative score).
 
 \section{Technologies}
 
@@ -156,7 +168,7 @@ The spout acts as the source of the data flow and the last bolt is the sink whic
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.5]{images/storm_example.png}
-	\caption{Storm example}
+	\caption{Storm example \cite{leibiusky2012}}
 	\label{storm_example}
 \end{figure}
 All the spoken words during the TV news show will be stored in a text file. If a new sentence was written into the file the spout hands them to the responsible bolt which separate the sentence into words. This stream of words is passed to another bolt that compares each word to a list of politician's names. If there is a match, the second bolt increases the counter for that name in a storage. To check the number of occurrence, query the database which is updated in real-time.\\
@@ -204,7 +216,7 @@ There are two different types of scaling. Add more hardware capacity and memory 
 \paragraph{High Availability and Fault Tolerance}
 Machines in the cluster will have technical issues from time to time. Cassandra is able to handle replaced failed nodes without downtime. Also, replication of data to multiple data center is possible to prevent downtime if a data center experiences a catastrophe like a fire. 
 \paragraph{Tuneable Consistency}
-Consistency means that a read operation returns the last written value from the database. But a database system cannot implement all three components of the CAP theore and the focus of Cassandra are Availability and Partition tolerance (AP). Therefore, the consistency is not guaranteed. But it allows to configure the degree of the consistency in balance with the level of availability: 
+Consistency means that a read operation returns the last written value from the database. But a database system cannot implement all three components of the CAP theorem\cite{Gilbert:2002:BCF:564585.564601} and the focus of Cassandra are Availability and Partition tolerance (AP). Therefore, the consistency is not guaranteed. But it allows to configure the degree of the consistency in balance with the level of availability: 
 \begin{itemize}
 	\item \textbf{Strict consistency} Also called sequential consistency. It's the highest level of consistency and it requires that a read will always return the recently written value in the database. If you have only a single machine with one processor (and one processor clock) the last written value is easy to find. But if there are geographically dispersed data centers, it becomes much more slippery. A global clock which can timestamp all operations, regardless of the data location or how many services are needed to determine the response, is required 
 	\item \textbf{Causal consistency} A weaker form of the strict approach. It uses a much more semantic approach and it does away with the fantasy of a single clock which can be synchronized without creating a bottleneck. The idea is that writes which are potentially related must be read in sequence. Writes are inferred not to be causally related, if two operations suddenly write to the same filed (operations must be different and unrelated). But if there is enough time between two write operations, we assume that they are causally related. Therefore, causal consistency says that causal writes must be read in sequence 
@@ -224,7 +236,7 @@ Cassandra was designed to take full advantage of multiprocessor/multicore machin
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.5]{images/throughputCassandra.png}
-	\caption{Performance of different distributed database systems}
+	\caption{Performance of different distributed database systems \cite{rabEtAl2012}}
 	\label{throughput_cassandra}
 \end{figure}
 
@@ -237,7 +249,7 @@ Cassandra using the data model from the BigTable approach from Google \cite{chan
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.4]{images/modelBigTable.png}
-	\caption{Illustration of the BigTable data model}
+	\caption{Illustration of the BigTable data model \cite{chang2008bigtable}}
 	\label{model_bigtable}
 \end{figure}
 The row name is the reversed URL. The map is sorted by the row key and we want to group the domains together with their corresponding subdomains (e.g. com.cnn.sport). The whole content of the page (source code) is kept in the contents column family. There are three different versions at timestamp t$_{3}$, t$_{5}$ and t$_{6}$ because the content of the page changes over time. Each cell can contain multiple versions of the data, indexed by 64-bit integers timestamps. The anchor column family contains the name of the anchors that reference the CNN page. The Sports Illustrated (column name is \textit{anchor:cnnsi.com}) and the MY-look (\textit{anchor:my.look.ca}) pages have a link to CNN. The column name contains information too, that is not possible with a relational database model. Every column key is named using the syntax: \textit{family:qualifier}. A column family has to be created before data can be stored under any column key in that family.
@@ -246,20 +258,6 @@ The row name is the reversed URL. The map is sorted by the row key and we want t
 \section{Implementation}\label{implementation}
 The following chapter describes the prototype developed by the authors to answer the question raised in chapter~\ref{research_questions}. Firstly, several central parts of the prototype are described in detail. Thereafter, the chapter~\ref{section_topology} shows how these parts are connected within the application. Finally, the chapter~\ref{section_api} describes how the prototype can be extended with new functionality.
 
-
-\subsection{SentiWordNet Analysis}
-SentiNetWord\footnote{http://sentiwordnet.isti.cnr.it/} is an English dictionary for opinion mining (OM, also known as sentiment classification). The goal was to decide for every word of the WordNet\footnote{http://wordnet.princeton.edu/} if it has a positive, negative or neutral meaning. WordNet is a large lexical database of nouns, verbs, adjectives and adverbs provided by the Princeton University. The developers calculated for every word three values between 0.0 and 1.0 and they had to sum up to one. They labelled different entries of the dictionary manually to define a ground truth for the training set. Then a set of classifiers was trained with the provided data. After these steps the classifiers were able to calculate the corresponding values of the remaining words which weren't in the training data samples. Since the first version of SentiWordNet in 2006 a lot of improvements are done, the actual version is 3.0.0. It's freely available for research approaches.\\
-The dictionary consists of 117'659 entries (69.8\% nouns, 15.4\% adjectives, 11.7\% verbs and 3.1\% adverbs). If we take a closer look at the calculated values (in SentiNetWord 1.0.0) we can see that most of the words are objective (about eighty percent are greater than 0.75). Only a few words are positive (0.48\% \textgreater \ 0.75; about 560 words) or negative (1.28\% \textgreater \ 0.75; about 1500 words).\\
-The resulting dictionary can be downloaded on the research website of SentiWordNet and has the following columns (tab separated):
-\begin{enumerate}
-	\item Part of speech (noun, verb, adjective, adverb)
-  \item ID
-	\item Positive score
-	\item Negative score
-	\item The words (plural because of synonyms)
-	\item Glossary (the word in a given context)
-\end{enumerate}
-The neutral (objective) score of the word can be calculated by 1 - (Positive score + Negative score).
 
 \subsection{Fuzzy Concept Implementation}
 To delegate the creation of the model with the implemented fuzzy approach to the \textit{FuzzyBolt} class, a Parameterized Factory Method pattern is used. It's possible to create a new fuzzy model approach by extending the \textit{FuzzyModel} class and modify the \textit{FuzzyModelFactory} to make the object creation of the corresponding model accessible. The selection of the new approach can be done by the following statements:
@@ -439,6 +437,7 @@ Adding new membership functions, such as a Gaussian function, may enhance the va
 \section{Future Work}\label{future_work}
 While the presented prototype provides a solution for the fuzzy analysis of tweets, the chapter~\ref{implementation} shows that the approach is only basic, and clearly leaves room for improvement. Further work may explore different fields of information to be analysed, improve the provided analysis methods, or enhance the prototype on a technical level.
 \subsection{SentiWordNet}
+The implemented word-by-word approach is only the beginning of an accurate classifier. There are some main issues to work on in the next development steps. An improvement of the SentiWordNet can be to implement a \textit{language processing} step which is able to assign every word a part-of-speech tag. Then it is easier to find out which entry in the dictionary is the best match. To take other important information of the tweet into account, other \textit{features} can be used to describe the sentiment of it. For example emoticons or emphasized words. A \textit{combination} of different features to train a classifier could produce better results in the feature.
 \subsection{Implementation}
 There are numerous ways in which the current implementation of the prototype may be improved or extended. On a functional level, additional classifications may be added in future as shown in chapter~\ref{classification_extension}. These may include new or improved analysis methods such as advanced opinion mining or trend analysis, or additional fuzzy classification types. An additional functional improvement could be made by introducing a strategy which analysis tweets differently than the current word-by-word strategy.\\
 On a technical level, several issues arose during the development of the prototype which may be addresses in future work. Firstly, the current prototype heavily relies on hard-coded configuration. Externalising this configuration could greatly improve the handling of the application. Furthermore, the usage of the \texttt{java.lang.Number} class for support of both integers and floating point numbers is suboptimal and may be inaccurate in some cases. Finally and, in the opinion of the authors, most importantly, a graphical user interface would enable users with little technical experience to exploit the features of the prototype.
