@@ -100,8 +100,9 @@ This thesis will be conducted by prototyping.
 The prototype resulting from this project will be a Java application based on the Storm library and using Cassandra for persistence. For analysing the twitter feeds, SentiWordNet will be used. 
 
 \section{Existing Research}
-\subsection{Twitter Trends}
+\subsection{Twitter Trends}\label{twitter_trends}
 There are several papers about Twitter trends available. Some interesting approaches will be discussed in this chapter.\\
+
 
 A few people from the Northwestern University implemented a topic classification algorithm for Twitter trends \cite{leeEtAl2011}. To collect data for their experiments they used the information provided by the "What the trend"\footnote{http://whatthetrend.com/} website. They downloaded tweets which correspond to over 23'000 trending topics and randomly selected 768 topics to assign them to one of 18 selected topic classes like \textit{health, politics, technology} or \textit{movies}. They used supervised learning techniques to classify the trends to a topic class. The provided example (Figure \ref{techClass}) shows the hottest topics in the \textit{technology} class.
 \begin{figure}[h!]
@@ -327,7 +328,7 @@ The dictionary created by the code shown in listing~\ref{sentiwordnet_dict} is t
 
 
 
-\subsubsection{Fuzzy Classification}
+\subsubsection{Fuzzy Classification}\label{fuzzy_classification}
 \begin{figure}[h]
 	\centering
 	\includegraphics{images/uml_fuzzy.png}
@@ -382,19 +383,42 @@ return isFalling ? 1.0 - (relValue / diff) : relValue / diff;
 Finally, for the usage with Storm as described in chapter~\ref{TODO_storm}, the \texttt{getFields()} method will return the names of the fields defining the four limit parameters. These values are later retrieved to persist together with the fuzzily classified values.
 
 \subsection{Persistence}
-
+The persistence of tweets and the associated fuzzy classification is implemented in a rather simple way. A \texttt{CassandraBolt} receives tuples from the topology (cf. chapter~\ref{section_topology}). For each tuple, it calls the \texttt{CassandraConnector}, which uses a simple \texttt{INSERT} statement to write the values to the connected Cassandra database.
 
 \subsection{Topology}\label{section_topology}
-\begin{center}
-\begin{figure}[h!]
+\begin{figure}[h]
 	\centering
 	\includegraphics{images/uml_topology.png}
 	\caption{Class Diagram of the implemented topology}
 	\label{uml_topology}
 \end{figure}
-\end{center}
 
 \subsection{Extensibility: API}\label{section_api}
+\subsubsection{Data Collection}
+To improve or adapt the data collection, either the \texttt{TwitterSpout} class can be adapted or a new Spout class. Listing~\ref{new_spout} shows how the \texttt{TwitterSpout} is registered in the current version of the prototype. Any new Spout can be registered by changing the instantiation of the Spout and its name according to the new Spout implementation.
+\lstset{caption={Registration of a New Spout},label=new_spout}
+\begin{lstlisting}
+builder.setSpout("twitterStream", new TwitterSpout(oauth_consumer_key,
+				oauth_token, oauth_consumer_secret, oauth_access_token_secret,
+				track));
+\end{lstlisting}
+\subsubsection{Classification}
+\paragraph{Discrete Classification}\label{discrete_extension}
+Adding different discrete classification options to the prototype can provide the possibility to explore different fields of information gained from tweets. While the current sample implementation performs basic opinion mining, a different implementation may provide more advanced opinion mining, or for example provide information about trends (cf. chapter~\ref{twitter_trends}).\\
+In addition to implementing the \texttt{DiscreteClassification} interface, a programmer needs to specify a new factory method in the \texttt{SentiWordNetFactory} class (or write a new factory class), and register the bolt in the \texttt{MainTopology} as follows. Despite its name, the \texttt{SentiWordNetBolt} is not limited to the current implementation, in fact, it may be used with any discrete or fuzzy classification. The only restriction a programmer needs to consider is that the current prototype is designed for word-by-word analysis of tweets.
+\lstset{language=Java,caption={Bolt Registration},label=}
+\begin{lstlisting}
+SentiWordNetBolt<<Type>> bolt = SentiWordNetFactory.<<newFactoryMethod>>();
+\end{lstlisting}
+\paragraph{Fuzzy Classification}
+Adding new membership functions, such as a Gaussian function, may enhance the value of the fuzzy classification performed by the prototype. When creating a new implementation of the \texttt{FuzzyClassification} interface, the following requirements need to be considered.
+\begin{itemize}
+\item \textbf{getFields()}: The list this method returns (cf. chapter~\ref{fuzzy_classification}) represents the order of the according fields in the storm tuple.
+\item \textbf{getLinguisticTerm()}: is needed only for reference when storing values
+\item \textbf{FuzzyClassificationType}: For each new implementation, a new type needs to be added to the \texttt{FuzzyClassificationType} enumeration.
+\item \textbf{Persistence}: To be able to store the output of the new classification to Cassandra, a new Cassandra table has to be created. Furthermore, the \texttt{CassandraConnector} class should be extended to provide a new method for inserting into this table. Finally, the \texttt{switch} statement in the \texttt{storeTuple()} method of the \texttt{CassandraBolt} class needs to be expanded with a new \texttt{case} for the according \texttt{FuzzyClassificationType}, where the newly created insert method is called.
+\item \textbf{Bootstrap}: To register the new classification with the topology, refer to the additional steps in chapter~\ref{discrete_extension}.
+\end{itemize}
 
 \section{Conclusion}
 \subsection{Future Work}
@@ -411,5 +435,36 @@ The implemented word-by-word approach is only the beginning of an accurate class
 \bibliographystyle{plain}
 \bibliography{references}
 \newpage
+\appendix
+
+\section{README}
+\lstset{caption={}}
+\begin{lstlisting}
+Fuzzily classify twitter messages using storm and store to cassandra
+===
+
+
+Setup Cassandra (on ubuntu):
+---
+1. Make sure oracle JDK is installed (1.6+): https://help.ubuntu.com/community/Java#Oracle_Java_7
+2. Add the DataStax repository key to your aptitude trusted keys.
+> $ curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
+3. Install Cassandra:
+> sudo apt-get update && sudo apt-get install cassandra
+4. Create keyspace and tables:
+> cqlsh
+> run commands from src/main/resources/createDatabase.txt
+
+Build Runnable jar
+---
+1. Open a terminal window, navigate to pom.xml directory (project root)
+2. Execute the following command:
+> mvn clean compile assembly:single
+3. In target/, a runnable jar tsfc.jar is created
+
+Run Program
+---
+> java -jar tsfc.jar <<comma separated list of topics to watch (without whitespace)>>
+\end{lstlisting}
 
 \end{document}

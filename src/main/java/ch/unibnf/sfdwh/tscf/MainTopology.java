@@ -47,7 +47,8 @@ public class MainTopology {
 
 		TopologyBuilder builder = new TopologyBuilder();
 
-		builder.setSpout("twitterStream", new TwitterSpout(oauth_consumer_key, oauth_token, oauth_consumer_secret, oauth_access_token_secret, track));
+		builder.setSpout("twitterStream", new TwitterSpout(oauth_consumer_key, oauth_token, oauth_consumer_secret,
+				oauth_access_token_secret, track));
 
 		SentiWordNetBolt<Double> bolt = SentiWordNetFactory.createPositiveSentiWordNetBolt();
 		builder.setBolt("swnPositiveBolt", bolt).shuffleGrouping("twitterStream");
