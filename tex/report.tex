@@ -385,12 +385,27 @@ Finally, for the usage with Storm as described in chapter~\ref{TODO_storm}, the 
 The persistence of tweets and the associated fuzzy classification is implemented in a rather simple way. A \texttt{CassandraBolt} receives tuples from the topology (cf. chapter~\ref{section_topology}). For each tuple, it calls the \texttt{CassandraConnector}, which uses a simple \texttt{INSERT} statement to write the values to the connected Cassandra database.
 
 \subsection{Topology}\label{section_topology}
-\begin{figure}[h]
+\begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.8]{images/state.png}
 	\caption{State Chart for Tuple Processing}
 	\label{uml_states}
 \end{figure}
+In the previous chapters, the central part of the prototype have been laid out in detail. The connection of these parts into a running system is best illustrated using the following small source code sample. The listing shows the creation of Spout and Bolts in the \texttt{MainTopology} class as well as their registration with a \texttt{TopologyBuilder}. In addition, figure~\ref{uml_states} depicts the life cycle of tweets collected and analysed by the topology.
+
+\lstset{caption={Topology Setup},label=topology_setup}
+\begin{lstlisting}
+builder.setSpout("twitterStream", new TwitterSpout(oauth_consumer_key, oauth_token,
+	oauth_consumer_secret, oauth_access_token_secret, track));
+
+SentiWordNetBolt<Double> bolt = SentiWordNetFactory.createPositiveSentiWordNetBolt();
+builder.setBolt("swnPositiveBolt", bolt).shuffleGrouping("twitterStream");
+builder.setBolt("cassandraBolt", new CassandraBolt(), 1).shuffleGrouping("swnPositiveBolt");
+\end{lstlisting}	
+
+The first line shows the creation of the \texttt{TwitterSpout}. It retrieves tweets from Twitter, and emits them as tuples into the Storm framework.\\
+The next lines show the creation and the registration of the Bolts used in the prototype. Firstly, a Bolt for positive classification is instantiated by a call to the \texttt{SentiWordNetFactory} and registered with the topology. When a tuple is emitted from the \texttt{TwitterSpout}, it will be sent to this Bolt. Upon arrival, the Bolt will forward it to a \texttt{SentiWordNetClassification} instance and use the resulting output to calculate the fuzzy values by calling \texttt{TrapezoidClassification}. Lastly, it again emits these values as a tuple into the topology.\\
+As visible from figure~\ref{uml_states}, the last part in the topology is the \texttt{CassandraBolt}. It is responsible for storing the fuzzily classified values into the Cassandra database.
 
 \subsection{Extensibility: API}\label{section_api}
 The following chapter gives an overview of the options for extension provided by the prototype.
