@@ -393,6 +393,7 @@ The persistence of tweets and the associated fuzzy classification is implemented
 \end{figure}
 
 \subsection{Extensibility: API}\label{section_api}
+The following chapter gives an overview of the options for extension provided by the prototype.
 \subsubsection{Data Collection}
 To improve or adapt the data collection, either the \texttt{TwitterSpout} class can be adapted or a new Spout class. Listing~\ref{new_spout} shows how the \texttt{TwitterSpout} is registered in the current version of the prototype. Any new Spout can be registered by changing the instantiation of the Spout and its name according to the new Spout implementation.
 \lstset{caption={Registration of a New Spout},label=new_spout}
@@ -419,7 +420,7 @@ Adding new membership functions, such as a Gaussian function, may enhance the va
 \item \textbf{Bootstrap}: To register the new classification with the topology, refer to the additional steps in chapter~\ref{discrete_extension}.
 \end{itemize}
 
-\section{Future Work}
+\section{Future Work}\label{future_work}
 While the presented prototype provides a solution for the fuzzy analysis of tweets, the chapter~\ref{implementation} shows that the approach is only basic, and clearly leaves room for improvement. Further work may explore different fields of information to be analysed, improve the provided analysis methods, or enhance the prototype on a technical level.
 \subsection{SentiWordNet}
 \subsection{Implementation}
@@ -429,7 +430,7 @@ On a technical level, several issues arose during the development of the prototy
 During the development of the prototype, it was run and tested in a local setup only. However, both Storm and Cassandra are designed to run in a distributed architecture as for example a cluster. To harness the possibilities which these technologies provide, the prototype could be run on such a cluster or a cloud setup like Amazon's EC2 cloud in future.\\
 
 \section{Conclusion}
-
+The presented work shows how fuzzy logic can be applied to social data accessed from Twitter. More so, the implementation described in chapter~\ref{implementation} demonstrates that this is possible in a simple, strait-forward matter. Due to the limited time frame in which this work was conducted, clearly there are many open issues and unexplored possibilities remaining (cf. chapter~\ref{future_work}). However, the report at hand undoubtedly shows the convenience of the applied solution as well as its potential.
 
 
 
