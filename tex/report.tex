@@ -382,17 +382,15 @@ return isFalling ? 1.0 - (relValue / diff) : relValue / diff;
 Finally, for the usage with Storm as described in chapter~\ref{TODO_storm}, the \texttt{getFields()} method will return the names of the fields defining the four limit parameters. These values are later retrieved to persist together with the fuzzily classified values.
 
 \subsection{Persistence}
-
+The persistence of tweets and the associated fuzzy classification is implemented in a rather simple way. A \texttt{CassandraBolt} receives tuples from the topology (cf. chapter~\ref{section_topology}). For each tuple, it calls the \texttt{CassandraConnector}, which uses a simple \texttt{INSERT} statement to write the values to the connected Cassandra database.
 
 \subsection{Topology}\label{section_topology}
-\begin{center}
-\begin{figure}[h!]
+\begin{figure}[h]
 	\centering
 	\includegraphics{images/uml_topology.png}
 	\caption{Class Diagram of the implemented topology}
 	\label{uml_topology}
 \end{figure}
-\end{center}
 
 \subsection{Extensibility: API}\label{section_api}
 
@@ -410,5 +408,36 @@ Finally, for the usage with Storm as described in chapter~\ref{TODO_storm}, the 
 \bibliographystyle{plain}
 \bibliography{references}
 \newpage
+\appendix
+
+\section{README}
+\lstset{caption={}}
+\begin{lstlisting}
+Fuzzily classify twitter messages using storm and store to cassandra
+===
+
+
+Setup Cassandra (on ubuntu):
+---
+1. Make sure oracle JDK is installed (1.6+): https://help.ubuntu.com/community/Java#Oracle_Java_7
+2. Add the DataStax repository key to your aptitude trusted keys.
+> $ curl -L http://debian.datastax.com/debian/repo_key | sudo apt-key add -
+3. Install Cassandra:
+> sudo apt-get update && sudo apt-get install cassandra
+4. Create keyspace and tables:
+> cqlsh
+> run commands from src/main/resources/createDatabase.txt
+
+Build Runnable jar
+---
+1. Open a terminal window, navigate to pom.xml directory (project root)
+2. Execute the following command:
+> mvn clean compile assembly:single
+3. In target/, a runnable jar tsfc.jar is created
+
+Run Program
+---
+> java -jar tsfc.jar <<comma separated list of topics to watch (without whitespace)>>
+\end{lstlisting}
 
 \end{document}
