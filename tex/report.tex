@@ -259,17 +259,6 @@ The row name is the reversed URL. The map is sorted by the row key and we want t
 The following chapter describes the prototype developed by the authors to answer the question raised in chapter~\ref{research_questions}. Firstly, several central parts of the prototype are described in detail. Thereafter, the chapter~\ref{section_topology} shows how these parts are connected within the application. Finally, the chapter~\ref{section_api} describes how the prototype can be extended with new functionality.
 
 
-\subsection{Fuzzy Concept Implementation}
-To delegate the creation of the model with the implemented fuzzy approach to the \textit{FuzzyBolt} class, a Parameterized Factory Method pattern is used. It's possible to create a new fuzzy model approach by extending the \textit{FuzzyModel} class and modify the \textit{FuzzyModelFactory} to make the object creation of the corresponding model accessible. The selection of the new approach can be done by the following statements:
-\lstset{language=Java}
-\begin{lstlisting}
-FuzzyBolt fuzzyBolt = new FuzzyBolt();
-fuzzyBolt.setFuzzyModelName(``our approach'');
-\end{lstlisting}
-The second line will call the static \textit{getFuzzyModel} method of the factory.
-The \textit{SentiWordFuzzyModel} class has a \textit{createDict} method which creates a hash map out of the text file consists of the word as key and the corresponding vector with the opinions (positive, negative and neutral) as value.
-The \textit{FuzzyBolt} class is the first bolt in the whole Storm process and receives the output of the twitter spout. The execute-method calculates the three sentiment values of the tweet and give them to the Cassandra bolt.
-
 \subsection{Data Collection}
 To access Twitter data, a simple Storm Spout (cf. \ref{storm_components}) is used. At the initialization of this component, an \textit{oAuth} connection to Twitter is created. The oAuth authentication framework will not be discussed in this report, however, further details can be found at \url{http://oauth.net}. After initialization, the spout simply processes each tuple by assigning it a unique identifier (\texttt{UUID}) and forwarding it into the prototype topology (cf. chapter~\ref{section_topology}).
 
