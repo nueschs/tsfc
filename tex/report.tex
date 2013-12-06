@@ -281,7 +281,7 @@ To access Twitter data, a Storm Spout (cf. \ref{storm_components}) was created.
 \subsection{Classification}
 As stated in chapter \ref{research_questions}, the goal of the implementation is to enable fuzzy classification of tweets. To achieve fuzzy classification, two steps are necessary. First, there has to be a mapping of numerical values to the tweets. This step will e referred to as discrete classification in the following. Second, a fuzzy membership function must be applied to this discrete classification. This step is called fuzzy classification. This chapter details the implementation of these steps in the presented prototype.\\
 
-\subsubsection{Discrete Classification}
+\subsubsection{Discrete Classification}\label{section_discrete}
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=2.5]{images/uml_discrete.png}
@@ -332,21 +332,38 @@ The dictionary created by the code shown in listing~\ref{sentiwordnet_dict} is t
 
 
 \subsubsection{Fuzzy Classification}
-\begin{figure}[h!]
+\begin{figure}[h]
 	\centering
 	\includegraphics[scale=2.5]{images/uml_fuzzy.png}
 	\caption{Fuzzy Classification - Interface and Sample Implementation}
 	\label{uml_fuzzy}
 \end{figure}
-\begin{figure}[h!]
+
+Similar to the discrete classification (cf. chapter~\ref{section_discrete}), the prototype provides an interface for defining fuzzy classifications. This interface also features the same generic numerical type. In contrast to the discrete classification, however, the generic typing refers to the type of input which is used to calculate to fuzzy classification. The output is defined as a normalized \texttt{double} value, that is to say a value between 0 and 1.\\
+The interfaces provides a caller with the following methods, as shown in figure~\ref{uml_fuzzy}.
+\begin{itemize}
+\item \texttt{getAverage()} This convenience method calculates the average of all classification values supplied as input. It expects these values to be already fuzzily classified.
+\item \texttt{getClassification()} Returns the fuzzy classification for a single discrete value.
+\item \texttt{getClassifications()} For each value of the input map, this method calls \texttt{getClassification()}, and adds it to the output map which is finally returned. In both maps, the keys are the words of a tweet to which a numerical value is mapped.
+\item \texttt{getFields()} Used to support the Storm data flow architecture (cf. chapter~\ref{TODO}), this method returns a list of fields which define the fuzzy classification. Generally, these are the initialization parameters for this classification, as shown in the subsequently described sample implementation.
+\item \texttt{getFieldValue()} Returns the value of a field declared by \\texttt{getFields()}. Again, this method is used for Support of Storm.
+\item \texttt{getLinguisticTerm()} Returns the linguistic term associated with this fuzzy classification.
+\item \texttt{getType()} The \texttt{FuzzyClassificationType} returned by this method is used when storing the classification, as detailed in chapter~\ref{section_api}.
+\end{itemize}
+
+\subsubsection{Sample Implementation}
+\begin{figure}[h]
 	\centering
 	\includegraphics[scale=0.5]{images/trapezoid.pdf}
 	\caption{Trapezoid Member ship function (based on \cite{faseld2012}, p. 74)}
 	\label{trapezoid_functions}
 \end{figure}
+
+For the sample implementation of a fuzzy classification, a trapezoid membership function was chosen. Examples of trapezoid function are depicted in figure~\ref{trapezoid_functions}, as adapted from \cite{faseld2012}, p. 74. There are four distinct boundaries which define such a function, namely the \textit{lower limit} (labelled with A), the \textit{lower support limit} (B), the \textit{upper support limit} (C) and the \textit{upper limit} (D). Furthermore, the implementation considers three types of trapezoid functions. Label 1 shows a \textit{left open} function, meaning that all values below the upper limit in the domain of attribute (TODO) will be classified with a membership degree of 1. Label 2 shows a \textit{closed} function, and label 3 a \textit{right open} function.\\
+
 \subsection{Persistence}
 \subsection{Build Infrastructure}
-\subsection{Extensibility: API}
+\subsection{Extensibility: API}\label{section_api}
 
 \section{Conclusion}
 \subsection{Future Work}
