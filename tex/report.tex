@@ -401,7 +401,7 @@ builder.setSpout("twitterStream", new TwitterSpout(oauth_consumer_key,
 				oauth_token, oauth_consumer_secret, oauth_access_token_secret,
 				track));
 \end{lstlisting}
-\subsubsection{Classification}
+\subsubsection{Classification}\label{classification_extension}
 \paragraph{Discrete Classification}\label{discrete_extension}
 Adding different discrete classification options to the prototype can provide the possibility to explore different fields of information gained from tweets. While the current sample implementation performs basic opinion mining, a different implementation may provide more advanced opinion mining, or for example provide information about trends (cf. chapter~\ref{twitter_trends}).\\
 In addition to implementing the \texttt{DiscreteClassification} interface, a programmer needs to specify a new factory method in the \texttt{SentiWordNetFactory} class (or write a new factory class), and register the bolt in the \texttt{MainTopology} as follows. Despite its name, the \texttt{SentiWordNetBolt} is not limited to the current implementation, in fact, it may be used with any discrete or fuzzy classification. The only restriction a programmer needs to consider is that the current prototype is designed for word-by-word analysis of tweets.
@@ -419,13 +419,17 @@ Adding new membership functions, such as a Gaussian function, may enhance the va
 \item \textbf{Bootstrap}: To register the new classification with the topology, refer to the additional steps in chapter~\ref{discrete_extension}.
 \end{itemize}
 
+\section{Future Work}
+While the presented prototype provides a solution for the fuzzy analysis of tweets, the chapter~\ref{implementation} shows that the approach is only basic, and clearly leaves room for improvement. Further work may explore different fields of information to be analysed, improve the provided analysis methods, or enhance the prototype on a technical level.
+\subsection{SentiWordNet}
+\subsection{Implementation}
+There are numerous ways in which the current implementation of the prototype may be improved or extended. On a functional level, additional classifications may be added in future as shown in chapter~\ref{classification_extension}. These may include new or improved analysis methods such as advanced opinion mining or trend analysis, or additional fuzzy classification types. An additional functional improvement could be made by introducing a strategy which analysis tweets differently than the current word-by-word strategy.\\
+On a technical level, several issues arose during the development of the prototype which may be addresses in future work. Firstly, the current prototype heavily relies on hard-coded configuration. Externalising this configuration could greatly improve the handling of the application. Furthermore, the usage of the \texttt{java.lang.Number} class for support of both integers and floating point numbers is suboptimal and may be inaccurate in some cases. Finally and, in the opinion of the authors, most importantly, a graphical user interface would enable users with little technical experience to exploit the features of the prototype.
+\subsection{Deployment}
+During the development of the prototype, it was run and tested in a local setup only. However, both Storm and Cassandra are designed to run in a distributed architecture as for example a cluster. To harness the possibilities which these technologies provide, the prototype could be run on such a cluster or a cloud setup like Amazon's EC2 cloud in future.\\
+
 \section{Conclusion}
-\subsection{Future Work}
-While the presented prototype provides a solution for the fuzzy analysis of tweets, the chapter~\ref{implementation} shows that the approach is only basic, and clearly leaves room for improvement. Further work may explore different fields of information to be analysed, improve
-\subsubsection{SentiWordNet}
-The implemented word-by-word approach is only the beginning of an accurate classifier. There are some main issues to work on in the next development steps. An improvement of the SentiWordNet can be to implement a \textit{language processing} step which is able to assign every word a part-of-speech tag. Then it is easier to find out which entry in the dictionary is the best match. To take other important information of the tweet into account, other \textit{features} can be used to describe the sentiment of it. For example emoticons or emphasized words. A \textit{combination} of different features to train a classifier could produce better results in the future.
-\subsubsection{Implementation}
-\subsubsection{Deployment}
+
 
 
 
